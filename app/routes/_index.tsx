@@ -31,7 +31,7 @@ function HeroSection() {
       }}
     >
       <div className="absolute inset-0 bg-black opacity-20 "></div>
-      <LogoColor className="absolute top-4 left-4 w-32 h-32" />
+      <LogoColor className="absolute top-4 left-4 w-64 h-64" />
     </section>
   );
 }

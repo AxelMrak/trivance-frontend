@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import toast from "react-hot-toast";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { POST_CREDENTIALS } from "~/api/auth/signIn";
 
 const schema = yup.object().shape({
@@ -35,35 +35,39 @@ export default function LoginForm() {
   const handleSignIn = async (formData: LoginFormData) => {
     const loginPromise = POST_CREDENTIALS(formData.email, formData.password);
 
-    toast.promise(
-      loginPromise,
-      {
-        loading: "Iniciando sesión...",
-        success: (res: any) => {
-          console.log("Login successful", res);
-          const user = res.user;
-          const token = res.session?.access_token;
+    toast.promise(loginPromise, {
+      loading: "Iniciando sesión...",
+      success: (res: any) => {
+        console.log("Login successful", res);
+        const user = res.user;
+        const token = res.session?.access_token;
 
-          if (token) {
-            document.cookie = `access_token=${token}; path=/; max-age=86400; secure; SameSite=Lax`;
-          }
-          console.log("user", user);
-          setUserData(user);
-          return `¡Bienvenido, ${user.name || "usuario"}!`;
-        },
-        error: (err: any) => {
-          console.error("Login failed", err);
-          return `Error al iniciar sesión: ${err.status || err.toString()}`;
-        },
+        if (token) {
+          document.cookie = `access_token=${token}; path=/; max-age=86400; secure; SameSite=Lax`;
+          document.cookie = `refresh_token=${res.session?.refresh_token}; path=/; max-age=86400; secure; SameSite=Lax`;
+          document.cookie = `user=${JSON.stringify(
+            user
+          )}; path=/; max-age=86400; secure; SameSite=Lax`;
+        }
+        console.log("user", user);
+        setUserData(user);
+        return `¡Bienvenido, ${user.name || "usuario"}!`;
       },
-      {
-        style: { minWidth: "250px" },
-        success: { duration: 5000, icon: "✅" },
-        error: { duration: 5000, icon: "❌" },
-      }
-    );
+      error: (err: any) => {
+        console.error("Login failed", err);
+        return `Error al iniciar sesión: ${err.status || err.toString()}`;
+      },
+    });
   };
-  console.log("userData", userData);
+  useEffect(() => {
+    const userCookie = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("user="));
+    if (userCookie) {
+      const user = JSON.parse(userCookie.split("=")[1]);
+      setUserData(user);
+    }
+  }, []);
   if (userData) {
     return (
       <div className=" rounded-md space-y-4">
