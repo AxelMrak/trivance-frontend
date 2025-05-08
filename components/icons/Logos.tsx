@@ -1,4 +1,5 @@
 export const LogoColor = (props: React.SVGProps<SVGSVGElement>) => (
+
   <svg
     width={props.width || 500}
     height={props.height || 500}
@@ -13,22 +14,22 @@ export const LogoColor = (props: React.SVGProps<SVGSVGElement>) => (
     />
     <path
       d="M196 144C196 138.477 200.477 134 206 134H427V154H206C200.477 154 196 149.523 196 144Z"
-      fill="url(#paint0_linear_147_212)"
+      fill={`url(#paint0_linear_147_212_${props.id})`}
     />
     <path
       d="M196 178C196 172.477 200.477 168 206 168H427V188H206C200.477 188 196 183.523 196 178Z"
-      fill="url(#paint1_linear_147_212)"
+      fill={`url(#paint1_linear_147_212_${props.id})`}
     />
     <path
       d="M196 212C196 206.477 200.477 202 206 202H427V222H206C200.477 222 196 217.523 196 212Z"
-      fill="url(#paint2_linear_147_212)"
+      fill={`url(#paint2_linear_147_212_${props.id})`}
     />
     <circle cx={207} cy={144} r={6} fill="white" />
     <circle cx={206} cy={178} r={6} fill="white" />
     <circle cx={207} cy={212} r={6} fill="white" />
     <defs>
       <linearGradient
-        id="paint0_linear_147_212"
+        id={`paint0_linear_147_212_${props.id}`}
         x1={196}
         y1={144}
         x2={427}
@@ -40,7 +41,7 @@ export const LogoColor = (props: React.SVGProps<SVGSVGElement>) => (
         <stop offset={1} stopColor="#FF7D00" stopOpacity={0} />
       </linearGradient>
       <linearGradient
-        id="paint1_linear_147_212"
+        id={`paint1_linear_147_212_${props.id}`}
         x1={196}
         y1={178}
         x2={427}
@@ -52,7 +53,7 @@ export const LogoColor = (props: React.SVGProps<SVGSVGElement>) => (
         <stop offset={1} stopColor="#FF7D00" stopOpacity={0} />
       </linearGradient>
       <linearGradient
-        id="paint2_linear_147_212"
+        id={`paint2_linear_147_212_${props.id}`}
         x1={196}
         y1={212}
         x2={427}

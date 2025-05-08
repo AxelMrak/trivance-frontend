@@ -2,10 +2,9 @@ import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import AuthLayout from '@/components/layouts/AuthLayout';
 
-//TODO: Components and refactor all. Separate logic and use zod with react hook form for login and register forms. Also, we need a conditional or wrapper to switch between forms easily.
-export default function Login() {
+export default function Register() {
   return (
-     <AuthLayout title="Bienvenido/a!" subtitle="Inicio de sesión">
+     <AuthLayout title="Bienvenido/a!" subtitle="Registro">
       <form className="w-full flex flex-col items-stretch justify-center gap-8">
         <Input
           label="Correo electrónico"
