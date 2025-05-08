@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
-import { Urbanist } from "next/font/google";
+import { Urbanist, Geist } from "next/font/google";
 import "@/styles/globals.css";
 
 const urbanist = Urbanist({
   variable: "--font-urbanist",
+  subsets: ["latin"],
+});
+
+const geist = Geist({
+  variable: "--font-geist",
   subsets: ["latin"],
 });
 
@@ -27,7 +32,7 @@ export default function RootLayout({
         <link rel="manifest" href="/site.webmanifest" />
       </head>
       <body
-        className={`${urbanist.variable} antialiased`}
+        className={`${geist.variable} ${urbanist.className} antialiased`}
       >
 
         {children}
