@@ -1,6 +1,7 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/*! 
+https://serp.co/tools/css-reset/
+<link rel="stylesheet" href="https://css.serp.co/css-reset/normalize.css/">
+*/
 
 /* Document
    ========================================================================== */
@@ -176,8 +177,7 @@ textarea {
  */
 
 button,
-input {
-  /* 1 */
+input { /* 1 */
   overflow: visible;
 }
 
@@ -187,8 +187,7 @@ input {
  */
 
 button,
-select {
-  /* 1 */
+select { /* 1 */
   text-transform: none;
 }
 
