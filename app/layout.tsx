@@ -32,10 +32,11 @@ export default function RootLayout({
         <link rel="manifest" href="/site.webmanifest" />
       </head>
       <body
-        className={`${geist.variable} ${urbanist.className} antialiased`}
+        className={`${geist.variable} ${urbanist.className} antialiased `}
       >
-
-        {children}
+        <main className="mx-auto container">
+          {children}
+        </main>
       </body>
     </html>
   );
