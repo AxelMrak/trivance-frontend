@@ -11,6 +11,7 @@ import { login, logout } from "@/lib/api/auth";
 import { Controller, useForm } from "react-hook-form";
 import { useUser } from "@/context/UserContext";
 import Link from "next/link";
+import { AuthenticatedSection } from "@components/features/auth/AuthenticatedSection";
 
 export const LoginForm = (): ReactElement => {
   const { userDispatch, user } = useUser();
@@ -39,34 +40,10 @@ export const LoginForm = (): ReactElement => {
     });
   };
 
-  const handleLogout = async () => {
-    const logoutPromise = logout();
-    await toast.promise(logoutPromise, {
-      loading: "Cerrando sesión...",
-      success: () => {
-        userDispatch({ type: "LOGOUT" });
-        router.push("/login");
-        return "Sesión cerrada";
-      },
-      error: (error) => `${error}`,
-    });
-  };
-
   return (
     <section className="w-full flex flex-col items-stretch justify-center gap-8">
       {user && user.user ? (
-        <div className="w-full flex flex-col items-stretch justify-center gap-8">
-          <h2 className="text-3xl font-light text-gray-800">
-            Ya iniciaste sesión como {user.user.name}
-          </h2>
-          <Button
-            variant="secondary"
-            className="w-full !text-3xl !font-light !text-start"
-            onClick={handleLogout}
-          >
-            Cerrar sesión
-          </Button>
-        </div>
+        <AuthenticatedSection />
       ) : (
         <form
           onSubmit={handleSubmit(onSubmit)}
