@@ -44,7 +44,7 @@ export default function Input({
       <label htmlFor={name} className="block !font-normal text-gray-900">
         {label} {required && touched && <span className="text-red-500">*</span>}
       </label>
-      <div className="relative w-full">
+      <div className="relative w-full !bg-gray-50 rounded-md">
         <input
           id={name}
           name={name}
@@ -57,7 +57,7 @@ export default function Input({
           className={`w-full px-3 py-2 border ${
             error ? "border-red-500" : "border-gray-300"
           } rounded-md focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-transparent ${
-            disabled ? "bg-gray-100 cursor-not-allowed" : "bg-white"
+            disabled ? "bg-gray-200 cursor-not-allowed" : "bg-gray-50"
           }`}
         />
         {isPassword && (
