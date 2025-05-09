@@ -7,16 +7,19 @@ import { useRouter } from "next/navigation";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import { loginSchema, LoginFormValues } from "@/lib/validation/auth.schema";
-import { login } from "@/lib/api/auth";
+import { login, logout } from "@/lib/api/auth";
 import { Controller, useForm } from "react-hook-form";
+import { useUser } from "@/context/UserContext";
+import Link from "next/link";
 
 export const LoginForm = (): ReactElement => {
+  const { userDispatch, user } = useUser();
   const router = useRouter();
 
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting, isValidating },
+    formState: { errors, isSubmitting, isValidating, isSubmitSuccessful },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
   });
@@ -27,54 +30,98 @@ export const LoginForm = (): ReactElement => {
       loading: "Iniciando sesión...",
       success: (data) => {
         if (data?.user) {
-          return `Bienvenido/a ${data.user.name}`;
+          userDispatch({ type: "SET_USER", payload: data.user });
+          return `Bienvenido/a ${data?.user?.name}`;
         }
         return "Iniciando sesión...";
       },
       error: (error) => `${error}`,
     });
   };
-  
+
+  const handleLogout = async () => {
+    const logoutPromise = logout();
+    await toast.promise(logoutPromise, {
+      loading: "Cerrando sesión...",
+      success: () => {
+        userDispatch({ type: "LOGOUT" });
+        router.push("/login");
+        return "Sesión cerrada";
+      },
+      error: (error) => `${error}`,
+    });
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-start gap-8">
-      <Controller
-        control={control}
-        name="email" 
-        render={({ field }) => (
-          <Input
-            label="Correo electrónico"
-            type="email"
-            placeholder="maria@trivance.com"
-            error={errors.email?.message}
-            className="text-3xl"
-            required
-            {...field}
+    <section className="w-full flex flex-col items-stretch justify-center gap-8">
+      {user && user.user ? (
+        <div className="w-full flex flex-col items-stretch justify-center gap-8">
+          <h2 className="text-3xl font-light text-gray-800">
+            Ya iniciaste sesión como {user.user.name}
+          </h2>
+          <Button
+            variant="secondary"
+            className="w-full !text-3xl !font-light !text-start"
+            onClick={handleLogout}
+          >
+            Cerrar sesión
+          </Button>
+        </div>
+      ) : (
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col items-start gap-8"
+        >
+          <Controller
+            control={control}
+            name="email"
+            render={({ field }) => (
+              <Input
+                label="Correo electrónico"
+                type="email"
+                placeholder="maria@trivance.com"
+                error={errors.email?.message}
+                className="text-3xl"
+                required
+                {...field}
+              />
+            )}
           />
-          )}
-        />
-      <Controller
-        name="password"
-        control={control}
-        render={({ field }) => (
-          <Input
-            label="Contraseña"
-            type="password"
-            placeholder="********"
-            className="text-3xl text-gray-800"
-            error={errors.password?.message}
-            required
-            {...field}
+          <Controller
+            name="password"
+            control={control}
+            render={({ field }) => (
+              <Input
+                label="Contraseña"
+                type="password"
+                placeholder="********"
+                className="text-3xl text-gray-800"
+                error={errors.password?.message}
+                required
+                {...field}
+              />
+            )}
           />
-        )}
-        />
-      <Button
-        type="submit"
-        variant="primary"
-        className="w-full !text-3xl !font-light !text-start"
-      >
-        Iniciar sesión
-      </Button>
-    </form>
+          <Button
+            type="submit"
+            variant="primary"
+            className="w-full !text-3xl !font-light !text-start"
+            disabled={isSubmitting || isValidating || isSubmitSuccessful}
+            isLoading={isSubmitting || isValidating}
+          >
+            Iniciar sesión
+          </Button>
+          <span className="text-2xl font-light text-gray-800">
+            No tenes cuenta?{" "}
+            <Link
+              className="font-normal text-primary-base transition-all hover:underline"
+              href="/register"
+            >
+              Registrate aca
+            </Link>
+          </span>
+        </form>
+      )}
+    </section>
   );
 };
-

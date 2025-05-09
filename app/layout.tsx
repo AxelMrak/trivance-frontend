@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Urbanist, Geist } from "next/font/google";
 import "@/styles/globals.css";
 import { Toaster } from "react-hot-toast";
+import { UserProvider } from "@/context/UserContext";
 
 const urbanist = Urbanist({
   variable: "--font-urbanist",
@@ -26,20 +27,28 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+        <link
+          rel="icon"
+          type="image/png"
+          href="/favicon-96x96.png"
+          sizes="96x96"
+        />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel="shortcut icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href="/apple-touch-icon.png"
+        />
         <link rel="manifest" href="/site.webmanifest" />
       </head>
-      <body
-        className={`${geist.variable} ${urbanist.className} antialiased `}
-      >
-        <main className="mx-auto container">
-                  <Toaster />
-
-          {children}
-        </main>
+      <body className={`${geist.variable} ${urbanist.className} antialiased `}>
+        <UserProvider>
+          <main className="mx-auto container">
+            <Toaster />
+            {children}
+          </main>
+        </UserProvider>
       </body>
     </html>
   );

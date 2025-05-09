@@ -33,15 +33,13 @@ export default function Input({
   touched = false,
   className = "",
 }: InputProps) {
-
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === "password";
   const inputType = isPassword && showPassword ? "text" : type;
-  console.log(touched, error);
   return (
     <div className={`w-full flex flex-col items-start gap-3 ${className}`}>
       <label htmlFor={name} className="block !font-normal text-gray-800">
-        {label} {(required && touched) && <span className="text-red-500">*</span>}
+        {label} {required && touched && <span className="text-red-500">*</span>}
       </label>
       <div className="relative w-full">
         <input
@@ -84,4 +82,3 @@ export default function Input({
     </div>
   );
 }
-
