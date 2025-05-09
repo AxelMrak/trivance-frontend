@@ -3,14 +3,14 @@ import { LogoColor } from "@/components/icons/Logos";
 
 export const HeroAuth = () => {
   return (
-    <section className="w-full shadow hidden lg:block sticky top-0 h-svh rounded-r-sm">
+    <section className="w-full  h-full  relative shadow hidden lg:block">
       <Image
         src="/images/login-bg.webp"
         alt="Login Image"
         fill
-        className="object-cover  shadow rounded-r-sm"
+        className="object-cover rounded-r-lg shadow-lg"
       />
-      <div className="absolute top-0 left-0 w-full h-full bg-black/30  shadow rounded-r-sm" />
+      <div className="absolute top-0 left-0 w-full h-full bg-black/30  " />
       <LogoColor className="absolute top-0 left-5 w-50 h-50" id="desktop" />
     </section>
   );

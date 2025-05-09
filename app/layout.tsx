@@ -44,7 +44,7 @@ export default function RootLayout({
       </head>
       <body className={`${geist.variable} ${urbanist.className} antialiased `}>
         <UserProvider>
-          <main className="mx-auto container">
+          <main className="container">
             <Toaster />
             {children}
           </main>

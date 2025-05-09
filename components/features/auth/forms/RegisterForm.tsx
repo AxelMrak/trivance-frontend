@@ -58,6 +58,7 @@ export const RegisterForm = (): ReactElement => {
                 type="text"
                 placeholder="Maria"
                 error={errors.name?.message}
+                required
                 {...field}
               />
             )}
@@ -71,6 +72,7 @@ export const RegisterForm = (): ReactElement => {
                 type="email"
                 placeholder="maria@trivance.com"
                 error={errors.email?.message}
+                required
                 {...field}
               />
             )}
@@ -84,6 +86,7 @@ export const RegisterForm = (): ReactElement => {
                 type="password"
                 placeholder="********"
                 error={errors.password?.message}
+                required
                 {...field}
               />
             )}
@@ -97,6 +100,7 @@ export const RegisterForm = (): ReactElement => {
                 type="password"
                 placeholder="********"
                 error={errors.confirmedPassword?.message}
+                required
                 {...field}
               />
             )}
@@ -111,6 +115,7 @@ export const RegisterForm = (): ReactElement => {
                 type="text"
                 placeholder="11 1234 5678"
                 error={errors.phone?.message}
+                required
                 {...field}
               />
             )}
@@ -124,6 +129,7 @@ export const RegisterForm = (): ReactElement => {
                 type="text"
                 placeholder="Av. Corrientes 1234"
                 error={errors.address?.message}
+                required
                 {...field}
               />
             )}
@@ -133,6 +139,13 @@ export const RegisterForm = (): ReactElement => {
             type="submit"
             variant="secondary"
             className="!text-3xl !font-light w-full"
+            disabled={
+              isSubmitting ||
+              isValidating ||
+              isSubmitSuccessful ||
+              Object.keys(errors).length > 0
+            }
+            isLoading={isSubmitting || isValidating}
           >
             Registrate
           </Button>

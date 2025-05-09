@@ -83,7 +83,12 @@ export const LoginForm = (): ReactElement => {
             type="submit"
             variant="primary"
             className="w-full !text-3xl !font-light !text-start"
-            disabled={isSubmitting || isValidating || isSubmitSuccessful}
+            disabled={
+              isSubmitting ||
+              isValidating ||
+              isSubmitSuccessful ||
+              Object.keys(errors).length > 0
+            }
             isLoading={isSubmitting || isValidating}
           >
             Iniciar sesión

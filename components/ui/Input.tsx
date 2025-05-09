@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { EyeClosed } from "@components/icons/EyeClosed";
 import { EyeOpen } from "@components/icons/EyeOpen";
+import { ErrorIcon } from "@components/icons/ErrorIcon";
 
 type InputProps = {
   label: string;
@@ -37,8 +38,10 @@ export default function Input({
   const isPassword = type === "password";
   const inputType = isPassword && showPassword ? "text" : type;
   return (
-    <div className={`w-full flex flex-col items-start gap-3 ${className}`}>
-      <label htmlFor={name} className="block !font-normal text-gray-800">
+    <div
+      className={`w-full flex flex-col items-start gap-3 text-xl ${className}`}
+    >
+      <label htmlFor={name} className="block !font-normal text-gray-900">
         {label} {required && touched && <span className="text-red-500">*</span>}
       </label>
       <div className="relative w-full">
@@ -72,13 +75,20 @@ export default function Input({
           </button>
         )}
       </div>
-      <p
-        className={`mt-1 text-sm text-red-500 font-normal ${
-          error ? "opacity-100" : "opacity-0"
-        } transition-opacity duration-300`}
+      <span
+        className={`text-sm font-normal flex items-center gap-1 transition-opacity duration-300 ${
+          error ? "text-red-500" : "text-gray-400"
+        } ${error || required ? "opacity-100" : "opacity-0"}`}
       >
-        {error}
-      </p>
+        {error ? (
+          <>
+            <ErrorIcon width={15} height={15} />
+            {error}
+          </>
+        ) : required ? (
+          "* Requerido"
+        ) : null}
+      </span>
     </div>
   );
 }
