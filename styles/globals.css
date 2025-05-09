@@ -25,13 +25,13 @@
   --color-secondary-900: #175662;
   --color-secondary-950: #093943;
 
-  --color-primary-light: #FFECD1;
+  --color-primary-light: #ffecd1;
   --color-secondary-dark: #001524;
- 
-  --font-sans: "Geist Sans", sans, system-ui, -apple-system, BlinkMacSystemFont,
+
+  --font-sans:
+    "Geist Sans", sans, system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji", "Segoe UI Symbol";
-
 }
 
 /*! 
@@ -62,7 +62,6 @@ html {
 body {
   margin: 0;
 }
-
 
 /**
  * Correct the font size and margin on `h1` elements within `section` and
@@ -205,7 +204,8 @@ textarea {
  */
 
 button,
-input { /* 1 */
+input {
+  /* 1 */
   overflow: visible;
 }
 
@@ -215,7 +215,8 @@ input { /* 1 */
  */
 
 button,
-select { /* 1 */
+select {
+  /* 1 */
   text-transform: none;
 }
 
