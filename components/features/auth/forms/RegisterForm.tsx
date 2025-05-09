@@ -149,7 +149,7 @@ export const RegisterForm = (): ReactElement => {
           >
             Registrate
           </Button>
-          <span className="text-2xl font-light text-gray-800">
+          <span className="text-xl lg:text-2xl font-light text-gray-800">
             Ya tenes cuenta?{" "}
             <Link
               className="font-normal text-secondary-800 transition-all hover:underline"

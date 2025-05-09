@@ -93,7 +93,7 @@ export const LoginForm = (): ReactElement => {
           >
             Iniciar sesión
           </Button>
-          <span className="text-2xl font-light text-gray-800">
+          <span className="text-xl lg:text-2xl font-light text-gray-800">
             No tenes cuenta?{" "}
             <Link
               className="font-normal text-primary-base transition-all hover:underline"
