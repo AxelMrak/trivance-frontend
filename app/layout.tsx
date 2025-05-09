@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Urbanist, Geist } from "next/font/google";
 import "@/styles/globals.css";
+import { Toaster } from "react-hot-toast";
 
 const urbanist = Urbanist({
   variable: "--font-urbanist",
@@ -35,6 +36,8 @@ export default function RootLayout({
         className={`${geist.variable} ${urbanist.className} antialiased `}
       >
         <main className="mx-auto container">
+                  <Toaster />
+
           {children}
         </main>
       </body>

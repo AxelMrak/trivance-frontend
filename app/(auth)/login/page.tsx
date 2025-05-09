@@ -1,30 +1,24 @@
-import Input from '@/components/ui/Input';
-import Button from '@/components/ui/Button';
-import AuthLayout from '@/components/layouts/AuthLayout';
+import AuthLayout from "@/components/layouts/AuthLayout";
+import { LoginForm } from "@/components/features/auth/forms/LoginForm";
+import Link from "next/link";
 
-//TODO: Components and refactor all. Separate logic and use zod with react hook form for login and register forms. Also, we need a conditional or wrapper to switch between forms easily.
 export default function Login() {
   return (
-     <AuthLayout title="Bienvenido/a!" subtitle="Inicio de sesión">
-      <form className="w-full flex flex-col items-stretch justify-center gap-8">
-        <Input
-          label="Correo electrónico"
-          name="email"
-          type="email"
-          placeholder="maria@trivance.com"
-          className="text-3xl"
-        />
-        <Input
-          label="Contraseña"
-          name="password"
-          type="password"
-          placeholder="********"
-          className="text-3xl"
-        />
-        <Button type="submit" variant="primary" className="w-fit !text-3xl !font-light">
-          Iniciar sesión
-        </Button>
-      </form>
+    <AuthLayout title="Bienvenido/a!" subtitle="Inicio de sesión">  
+    <div className="w-full flex flex-col items-stretch justify-center gap-8">
+      <div className="w-full flex flex-col items-stretch justify-center gap-8">
+      <LoginForm />
+      </div>
+      <span className="text-2xl font-light text-gray-800">
+        No tenes cuenta?{" "}
+         <Link
+          className="font-normal text-primary-base transition-all hover:underline"
+          href="/register"
+        >
+           Registrate aca
+         </Link>
+        </span>
+      </div>
     </AuthLayout>
-  )
-};
+  );
+}

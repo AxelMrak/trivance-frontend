@@ -12,10 +12,10 @@ type InputProps = {
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
   error?: string;
-  touched?: boolean;
   disabled?: boolean;
   placeholder?: string;
   required?: boolean;
+  touched?: boolean;
   className?: string;
 };
 
@@ -23,25 +23,25 @@ export default function Input({
   label,
   name,
   type = "text",
-  value,
+  value = "",
   onChange,
   onBlur,
   error,
-  touched,
   disabled = false,
   placeholder,
   required = false,
+  touched = false,
   className = "",
 }: InputProps) {
 
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === "password";
   const inputType = isPassword && showPassword ? "text" : type;
-
+  console.log(touched, error);
   return (
     <div className={`w-full flex flex-col items-start gap-3 ${className}`}>
-      <label htmlFor={name} className="block !font-normal text-gray-800 ">
-        {label} {required && <span className="text-red-500">*</span>}
+      <label htmlFor={name} className="block !font-normal text-gray-800">
+        {label} {(required && touched) && <span className="text-red-500">*</span>}
       </label>
       <div className="relative w-full">
         <input
@@ -53,9 +53,9 @@ export default function Input({
           onBlur={onBlur}
           disabled={disabled}
           placeholder={placeholder}
-          className={`w-full px-3 py-2 border  ${
-            error && touched ? "border-red-500" : "border-gray-300"
-          } rounded-md  focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-transparent ${
+          className={`w-full px-3 py-2 border ${
+            error ? "border-red-500" : "border-gray-300"
+          } rounded-md focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-transparent ${
             disabled ? "bg-gray-100 cursor-not-allowed" : "bg-white"
           }`}
         />
@@ -74,9 +74,14 @@ export default function Input({
           </button>
         )}
       </div>
-      {error && touched && (
-        <p className="mt-1 text-sm text-red-600">{error}</p>
-      )}
+      <p
+        className={`mt-1 text-sm text-red-500 font-normal ${
+          error ? "opacity-100" : "opacity-0"
+        } transition-opacity duration-300`}
+      >
+        {error}
+      </p>
     </div>
   );
 }
+
