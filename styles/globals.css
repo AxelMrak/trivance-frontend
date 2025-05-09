@@ -1,3 +1,39 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary-50: #fffaec;
+  --color-primary-100: #fff4d3;
+  --color-primary-200: #ffe4a5;
+  --color-primary-300: #ffd06d;
+  --color-primary-400: #ffaf32;
+  --color-primary-500: #ff950a;
+  --color-primary-base: #ff7d00;
+  --color-primary-700: #cc5b02;
+  --color-primary-800: #a1460b;
+  --color-primary-900: #823b0c;
+  --color-primary-950: #461c04;
+
+  --color-secondary-50: #ecfffe;
+  --color-secondary-100: #d0fdfc;
+  --color-secondary-200: #a6fbfb;
+  --color-secondary-300: #69f5f7;
+  --color-secondary-400: #25e5eb;
+  --color-secondary-500: #09c9d1;
+  --color-secondary-600: #0aa1b0;
+  --color-secondary-700: #10808e;
+  --color-secondary-base: #15616d;
+  --color-secondary-900: #175662;
+  --color-secondary-950: #093943;
+
+  --color-primary-light: #ffecd1;
+  --color-secondary-dark: #001524;
+
+  --font-sans:
+    "Geist Sans", sans, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
 /*! 
 https://serp.co/tools/css-reset/
 <link rel="stylesheet" href="https://css.serp.co/css-reset/normalize.css/">
@@ -28,20 +64,11 @@ body {
 }
 
 /**
- * Render the `main` element consistently in IE.
- */
-
-main {
-  display: block;
-}
-
-/**
  * Correct the font size and margin on `h1` elements within `section` and
  * `article` contexts in Chrome, Firefox, and Safari.
  */
 
 h1 {
-  font-size: 2em;
   margin: 0.67em 0;
 }
 
@@ -177,7 +204,8 @@ textarea {
  */
 
 button,
-input { /* 1 */
+input {
+  /* 1 */
   overflow: visible;
 }
 
@@ -187,7 +215,8 @@ input { /* 1 */
  */
 
 button,
-select { /* 1 */
+select {
+  /* 1 */
   text-transform: none;
 }
 
