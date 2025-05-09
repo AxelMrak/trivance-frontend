@@ -3,7 +3,7 @@ import { useUser } from "@/context/UserContext";
 import { logout } from "@/lib/api/auth";
 import { toast } from "react-hot-toast";
 import Button from "@/components/ui/Button";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 export const AuthenticatedSection = () => {
   const { user, userDispatch } = useUser();
