@@ -34,13 +34,6 @@ export default function GlobalError({
               ))}
             </div>
           )}
-
-          <button
-            onClick={reset}
-            className="px-4 py-2 mt-4 font-semibold text-white bg-blue-600 rounded hover:bg-blue-700"
-          >
-            Try again
-          </button>
         </article>
       </body>
     </html>
