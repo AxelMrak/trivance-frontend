@@ -46,7 +46,7 @@ export default function RootLayout({
       <body className={`${geist.variable} ${urbanist.className} antialiased `}>
         <ViewTransition>
           <UserProvider>
-            <main className="container">
+            <main >
               <Toaster />
               {children}
             </main>
