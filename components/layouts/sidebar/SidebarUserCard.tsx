@@ -1,32 +1,55 @@
 import { SettingsIcon } from "@components/icons/SettingsIcon";
 import { useUser } from "@/context/UserContext";
 
-export default function SidebarUserCard({
-  collapsed,
-}: {
-  collapsed: boolean;
-}) {
+export default function SidebarUserCard({ collapsed }: { collapsed: boolean }) {
   const { user } = useUser();
 
   return (
-    <div className={`bg-white flex flex-row items-center ${collapsed ? 'justify-center' : 'justify-start'} gap-4 border border-gray-200 ${collapsed ? 'px-4 py-2' : 'p-2'}  rounded-md w-full transition-transform `}>
-      <div className={`rounded-full overflow-hidden ${collapsed ? 'hidden' : 'block'} w-10 h-10 relative`}>
+    <div
+      className={`
+        bg-white border border-gray-200 rounded-md w-full
+        flex items-center transition-all duration-300 ease-in-out
+        ${collapsed ? 'justify-center p-2 gap-2' : 'justify-start p-2 gap-4'}
+      `}
+    >
+      {/* Avatar */}
+      <div
+        className={`
+          relative rounded-full overflow-hidden transition-all duration-300 ease-in-out
+          ${collapsed ? 'w-0 h-0 opacity-0 hidden' : 'w-10 h-10 opacity-100'}
+        `}
+      >
         <img
-          src={'https://avatar.iran.liara.run/public'}
+          src="https://avatar.iran.liara.run/public"
           alt="User Profile"
           className="absolute inset-0 object-cover w-full h-full rounded-full"
         />
       </div>
-      <div className="flex flex-col">
-        <span className={`text-gray-800 font-semibold ${collapsed ? 'text-sm' : 'text-lg'}`}>
+
+      {/* Text Info */}
+      <div
+        className={`
+          flex flex-col transition-all duration-300 ease-in-out overflow-hidden
+          ${collapsed ? 'max-w-0 opacity-0 hidden' : 'max-w-xs opacity-100'}
+        `}
+      >
+        <span className="text-gray-800 font-semibold text-lg truncate">
           {user?.user?.name}
         </span>
-        <span className={`text-gray-600 ${collapsed ? 'hidden' : 'text-sm'}`}>
+        <span className="text-gray-600 text-sm truncate">
           {user?.user?.email}
         </span>
       </div>
-
-      <SettingsIcon width={collapsed ? 26 : 32} height={collapsed ? 26 : 32} className="self-start hover:opacity-60 transition-transform cursor-pointer" />
+      <span className={`text-gray-800 font-semibold text-sm ${collapsed ? 'max-w-full opacity-100' : 'max-w-0 opacity-0 hidden'} transition-all duration-300 ease-in-out`}>
+        {user?.user?.name}
+      </span>
+      <SettingsIcon
+        className={`
+          transition-all duration-300 ease-in-out hover:opacity-60 cursor-pointer border-gray-800
+  w-8 h-8
+`}
+      />
     </div>
-  )
+  );
 }
+
