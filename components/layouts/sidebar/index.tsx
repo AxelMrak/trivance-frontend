@@ -1,11 +1,14 @@
 'use client';
-import { LogoColor } from "@/components/icons/Logos";
-import { SidebarIcon } from "@/components/icons/SidebarIcon";
 import { useState } from "react";
 import SidebarNav from "@components/layouts/sidebar/SidebarNav";
 import SidebarFooter from "@components/layouts/sidebar/SidebarFooter";
+import SidebarHeader from "@components/layouts/sidebar/SidebarHeader";
 
-export const Sidebar = () => {
+export const Sidebar = ({
+  className = "",
+}: {
+  className?: string;
+}) => {
 
   const [collapsed, setCollapsed] = useState(false);
 
@@ -16,19 +19,10 @@ export const Sidebar = () => {
   return (
     <aside
       className={`h-full bg-gray-50 text-white transition-discrete duration-300 ease-in-out p-2 
-      ${collapsed ? 'w-32' : 'w-64'} flex flex-col items-stretch justify-between`}
+      ${collapsed ? 'w-32' : 'w-64'} flex-col items-stretch justify-between ${className}`}
     >
-      <header className={`flex items-center justify-between p-2 gap-3 w-full`}>
-        <LogoColor
-          className={`transition-all duration-300 ease-in-out ${collapsed ? 'w-32' : 'w-40'} h-24`}
-        />
-        <button onClick={toggle} className="text-gray-700 hover:text-gray-900 cursor-pointer transition-transform hover:scale-110">
-          <SidebarIcon
-            width={collapsed ? 20 : 32}
-            height={collapsed ? 20 : 32}
-          />
-        </button>
-      </header>
+
+      <SidebarHeader collapsed={collapsed} toggle={toggle} />
       <SidebarNav collapsed={collapsed} />
       <SidebarFooter collapsed={collapsed} />
     </aside>
