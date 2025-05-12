@@ -16,7 +16,7 @@ export default function NotFoundRedirect() {
       </p>
       <Link
         className="px-4 py-2 text-white text-xl !bg-primary-base rounded-md hover:bg-primary-dark"
-        href="/"
+        href="/dashboard"
       >
         Ir a la página de inicio
       </Link>

@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import { loginSchema, LoginFormValues } from "@/lib/validation/auth.schema";
-import { login, logout } from "@/lib/api/auth";
+import { login } from "@/lib/api/auth";
 import { Controller, useForm } from "react-hook-form";
 import { useUser } from "@/context/UserContext";
 import Link from "next/link";
@@ -32,6 +32,7 @@ export const LoginForm = (): ReactElement => {
       success: (data) => {
         if (data?.user) {
           userDispatch({ type: "SET_USER", payload: data.user });
+          router.refresh();
           return `Bienvenido/a ${data?.user?.name}`;
         }
         return "Iniciando sesión...";

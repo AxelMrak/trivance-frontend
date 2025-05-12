@@ -1,4 +1,4 @@
-export const EyeOpen = (props: React.SVGProps<SVGSVGElement>) => {
+export const SidebarIcon = (props: React.SVGProps<SVGSVGElement>) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -10,12 +10,12 @@ export const EyeOpen = (props: React.SVGProps<SVGSVGElement>) => {
       strokeWidth={1}
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="icon icon-tabler icons-tabler-outline icon-tabler-eye"
+      className="icon icon-tabler icons-tabler-outline icon-tabler-layout-sidebar-right-collapse"
       {...props}
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
-      <path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" />
+      <path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z" />
+      <path d="M15 4v16" />
     </svg>
   )
-};
+}
