@@ -41,11 +41,10 @@ export default function SidebarFooter({ collapsed }: { collapsed: boolean }) {
             <NotificationIcon className="w-6 h-6" />
             <span
               className="
-        absolute -top-0 -right-0 bg-secondary-base text-white text-xs 
-        rounded-full w-3 h-3 flex items-center justify-center
+        absolute top-0 right-1 bg-secondary-base text-white text-xs 
+        rounded-full w-2 h-2 flex items-center justify-center
         font-semibold shadow-md"
             >
-              3
             </span>
           </div>
         </Button>
