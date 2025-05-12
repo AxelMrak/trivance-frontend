@@ -1,6 +1,5 @@
 
 import { NotificationIcon } from "@/components/icons/NotificationIcon";
-import { SettingsIcon } from "@/components/icons/SettingsIcon";
 import Button from "@/components/ui/Button";
 import SidebarUserCard from "@components/layouts/sidebar/SidebarUserCard";
 

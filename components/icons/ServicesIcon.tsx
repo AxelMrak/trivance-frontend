@@ -1,4 +1,4 @@
-export default function ServicesIcon(props: any) {
+export default function ServicesIcon(props: React.SVGProps<SVGSVGElement>) {
   return (<svg
     width={props.width || 35}
     height={props.height || 35}

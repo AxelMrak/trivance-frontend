@@ -1,4 +1,4 @@
-export default function MenuIcon(props: any) {
+export default function MenuIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
