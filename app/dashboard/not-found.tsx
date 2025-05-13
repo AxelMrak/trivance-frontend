@@ -1,9 +1,10 @@
-"use client";
-
 import NotFoundComponent from "@/components/features/not-found";
+import DashboardLayout from "./layout";
 
 export default function NotFoundRedirect() {
   return (
-    <NotFoundComponent />
+    <DashboardLayout >
+      <NotFoundComponent />
+    </DashboardLayout>
   );
 }
