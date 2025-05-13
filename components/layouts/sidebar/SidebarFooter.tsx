@@ -1,4 +1,5 @@
 
+import { LogoutIcon } from "@/components/icons/LogoutIcon";
 import { NotificationIcon } from "@/components/icons/NotificationIcon";
 import Button from "@/components/ui/Button";
 import SidebarUserCard from "@components/layouts/sidebar/SidebarUserCard";
@@ -51,6 +52,21 @@ export default function SidebarFooter({ collapsed }: { collapsed: boolean }) {
       </div>
 
       <SidebarUserCard collapsed={collapsed} />
+      <Button
+        variant="secondary"
+        className={`
+          w-full !text-lg flex items-center gap-2
+          transition-all duration-300 ease-in-out
+          ${collapsed ? 'justify-center' : 'justify-between'}
+        `}
+        onClick={() => alert("¡Hola!")}
+      >
+        <p className={`${collapsed ? 'opacity-0 max-w-0 hidden' : 'opacity-100 max-w-xs'
+          }`}>
+          Cerrar sesión
+        </p>
+        <LogoutIcon className="w-6 h-6" />
+      </Button>
     </footer>
   );
 }
