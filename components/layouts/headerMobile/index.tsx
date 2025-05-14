@@ -8,6 +8,7 @@ import Button from "@/components/ui/Button";
 import { NotificationIcon } from "@/components/icons/NotificationIcon";
 import HeaderMobileNav from "@components/layouts/headerMobile/HeaderMobileNav";
 import HeaderMobileUser from "@components/layouts/headerMobile/HeaderMobileUser";
+import { LogoutButton } from "@/components/features/auth/LogoutButton";
 
 export default function HeaderMobile({
   className = "",
@@ -71,7 +72,10 @@ export default function HeaderMobile({
         `}
       >
         <HeaderMobileNav handleCloseMenu={handleCloseMenu} />
-        <HeaderMobileUser />
+        <div className="w-full flex flex-col items-center gap-4">
+          <HeaderMobileUser />
+          <LogoutButton collapsed={false} />
+        </div>
       </div>
     </header>
   );

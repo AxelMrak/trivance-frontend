@@ -4,30 +4,31 @@ import ClientsIcon from "@/components/icons/ClientsIcon";
 import HomeIcon from "@/components/icons/HomeIcon";
 import ServicesIcon from "@/components/icons/ServicesIcon";
 import { AppRoute } from "@/types/Route";
+const baseDashboardPath = "/dashboard";
 
 export const routes: AppRoute[] = [
   {
-    path: "/dashboard",
+    path: baseDashboardPath,
     label: "Inicio",
     icon: HomeIcon,
   },
   {
-    path: "/clients",
+    path: `${baseDashboardPath}/clients`,
     label: "Clientes",
     icon: ClientsIcon,
   },
   {
-    path: "/services",
+    path: `${baseDashboardPath}/services`,
     label: "Servicios",
     icon: ServicesIcon,
   },
   {
-    path: "/calendar",
+    path: `${baseDashboardPath}/calendar`,
     label: "Calendario",
     icon: CalendarIcon,
   },
   {
-    path: "/appointments",
+    path: `${baseDashboardPath}/appointments`,
     label: "Turnos",
     icon: AppointmentIcon,
   }

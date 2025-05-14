@@ -25,8 +25,8 @@ export default function HeaderMobileUser() {
         </div>
       </div>
       <SettingsIcon
-        className={`
-          transition-all duration-300 ease-in-out hover:opacity-60 cursor-pointer border-gray-800 w-12 h-12`} />
+        className={`transition-all duration-300 ease-in-out hover:opacity-60 cursor-pointer border-gray-800 w-12 h-12`}
+      />
     </section>
   )
 }

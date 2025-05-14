@@ -1,4 +1,6 @@
 
+import { LogoutButton } from "@/components/features/auth/LogoutButton";
+import { LogoutIcon } from "@/components/icons/LogoutIcon";
 import { NotificationIcon } from "@/components/icons/NotificationIcon";
 import Button from "@/components/ui/Button";
 import SidebarUserCard from "@components/layouts/sidebar/SidebarUserCard";
@@ -51,6 +53,7 @@ export default function SidebarFooter({ collapsed }: { collapsed: boolean }) {
       </div>
 
       <SidebarUserCard collapsed={collapsed} />
+      <LogoutButton collapsed={collapsed} />
     </footer>
   );
 }
