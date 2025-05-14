@@ -2,7 +2,7 @@ import { CreateServicePayload, Service } from "@/types/Service";
 
 export async function getServices(): Promise<Service[]> {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/services`,
+    `${process.env.NEXT_PUBLIC_API_URL}/services/getAll`,
     {
       method: "GET",
       cache: "no-store",
@@ -19,7 +19,7 @@ export async function getServices(): Promise<Service[]> {
 
 export async function getService(id: string): Promise<Service> {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/services/${id}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/services/get/${id}`,
     {
       method: "GET",
       cache: "no-store",
@@ -34,7 +34,7 @@ export async function getService(id: string): Promise<Service> {
 
 export async function createService(payload: CreateServicePayload): Promise<Service> {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/services`,
+    `${process.env.NEXT_PUBLIC_API_URL}/services/create`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -50,7 +50,7 @@ export async function createService(payload: CreateServicePayload): Promise<Serv
 
 export async function updateService(payload: Partial<CreateServicePayload>, id: string): Promise<Service> {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/services/${id}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/services/update/${id}`,
     {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -66,7 +66,7 @@ export async function updateService(payload: Partial<CreateServicePayload>, id: 
 
 export async function deleteService(id: string): Promise<{ message: string, id: string }> {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/services/${id}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/services/delete/${id}`,
     {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
