@@ -1,24 +1,18 @@
-export type IntervalDuration = {
-  hours: number | null;
-  minutes: number | null;
-  seconds: number | null;
-  days: number | null;
-  weeks: number | null;
-}
+import { IntervalObject } from "./Interval";
 
 export interface Service {
   id: string;
   company_id: string;
   name: string;
   description: string;
-  price: number;
-  duration: IntervalDuration;
-  created_at: Date;
+  price: number | string;
+  duration: IntervalObject;
+  created_at: Date | string;
 }
 
 export interface CreateServicePayload {
   name: string;
   description: string;
   price: number;
-  duration: IntervalDuration;
+  duration: string;
 }
