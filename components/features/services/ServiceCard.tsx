@@ -1,14 +1,39 @@
+"use client";
 import { Service } from "@/types/Service";
 import Button from "@/components/ui/Button";
 import { formatInterval, formatPrice } from "@/utils/format";
 import ClockIcon from "@/components/icons/ClockIcon";
 import EditIcon from "@/components/icons/EditIcon";
 import TrashIcon from "@/components/icons/TrashIcon";
+import toast from "react-hot-toast";
 
 export default function ServiceCard({
   service }: {
     service: Service
   }) {
+
+  const handleDelete = async () => {
+    const promise = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/services/${service.id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    toast.promise(promise, {
+      loading: "Eliminando servicio...",
+      success: (data: any) => {
+        if (data.status === 200) {
+          return "Servicio eliminado correctamente";
+        } else {
+          throw new Error(data.message);
+        }
+      },
+      error: (error) => {
+        return error.message;
+      },
+    });
+  }
 
   return (
     <article className="w-full flex flex-col items-start justify-between gap-4 p-4 bg-white border border-gray-300 rounded-md">
@@ -42,6 +67,7 @@ export default function ServiceCard({
             variant="tertiary"
             className="w-full md:w-auto
                     !text-md font-normal text-red-500 border !border-red-500 flex items-center justify-center gap-2"
+            onClick={handleDelete}
           >
             <TrashIcon className="w-5 h-5 " />
             Eliminar

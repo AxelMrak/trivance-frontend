@@ -2,7 +2,7 @@ import { Service } from "@/types/Service";
 import Button from "@/components/ui/Button";
 import SearchInput from "@/components/ui/SearchInput";
 import ServiceCard from "./ServiceCard";
-import ServiceCardSkeleton from "@/components/ui/skeletons/ServiceCardSkeleton";
+
 export default function Services({ services }: { services: Service[] }) {
   return (
     <div className="w-full min-h-[85svh] flex flex-col items-start justify-start gap-4 p-4 text-center bg-white">
@@ -16,7 +16,6 @@ export default function Services({ services }: { services: Service[] }) {
             variant="primary"
             className="w-full md:w-auto
               !text-2xl font-normal"
-
           >
             Crear servicio
             +
@@ -25,7 +24,7 @@ export default function Services({ services }: { services: Service[] }) {
       </div>
       <section className="w-full grid grid-cols-1 md:grid-cols-2  gap-4">
         {
-          services ? services.length > 0 ? (
+          services.length > 0 ? (
             services.map((service) => (
               <ServiceCard key={service.id} service={service} />
             ))
@@ -35,10 +34,7 @@ export default function Services({ services }: { services: Service[] }) {
                 No se encontraron servicios. Podes crear uno nuevo haciendo click en el botón de arriba.
               </p>
             </div>
-          ) : (
-            Array.from({ length: 4 }, (_, index) => (
-              <ServiceCardSkeleton key={index} />
-            )))
+          )
         }
       </section>
 
