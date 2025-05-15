@@ -1,5 +1,5 @@
 export async function login(payload: { email: string; password: string }) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/sign-in`, {
+  const res = await fetch(`${process.env.API_URL}/auth/sign-in`, {
     method: "POST",
     credentials: "include",
     headers: { "Content-Type": "application/json" },
@@ -36,7 +36,7 @@ export async function register(payload: {
 }
 
 export async function logout() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/sign-out`, {
+  const res = await fetch(`${process.env.API_URL}/auth/sign-out`, {
     method: "POST",
     credentials: "include",
   });
