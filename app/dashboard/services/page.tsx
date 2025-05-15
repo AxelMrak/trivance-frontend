@@ -6,10 +6,6 @@ import Services from "@/components/features/services";
 
 export default async function ServicePage() {
 
-  const data = await fetch(`http://localhost:3000/api/services`, {
-    method: "GET",
-  });
-  const services = await data.json();
   return (
     <main className="w-full h-full flex flex-col items-center justify-start gap-4 p-4 text-center bg-white">
       <MainHeader title="Servicios" />
@@ -20,7 +16,7 @@ export default async function ServicePage() {
           ))}
         </section>
       }>
-        <Services services={services} />
+        <Services services={[]} />
       </Suspense>
     </main>
   );
