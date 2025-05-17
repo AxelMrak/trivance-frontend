@@ -4,6 +4,7 @@ import "@/styles/globals.css";
 import { Toaster } from "react-hot-toast";
 import { UserProvider } from "@/context/UserContext";
 import { unstable_ViewTransition as ViewTransition } from "react";
+import { DialogProvider } from "@/context/ModalContext";
 
 const urbanist = Urbanist({
   variable: "--font-urbanist",
@@ -45,12 +46,14 @@ export default function RootLayout({
       </head>
       <body className={`${geist.variable} ${urbanist.className} antialiased `}>
         <ViewTransition>
-          <UserProvider>
-            <main >
-              <Toaster />
-              {children}
-            </main>
-          </UserProvider>
+          <DialogProvider>
+            <UserProvider>
+              <main>
+                <Toaster />
+                {children}
+              </main>
+            </UserProvider>
+          </DialogProvider>
         </ViewTransition>
       </body>
     </html>
