@@ -45,16 +45,12 @@ export default function RootLayout({
         <link rel="manifest" href="/site.webmanifest" />
       </head>
       <body className={`${geist.variable} ${urbanist.className} antialiased `}>
-        <ViewTransition>
-          <DialogProvider>
-            <UserProvider>
-              <main>
-                <Toaster />
-                {children}
-              </main>
-            </UserProvider>
-          </DialogProvider>
-        </ViewTransition>
+        <DialogProvider>
+          <UserProvider>
+            <Toaster />
+            {children}
+          </UserProvider>
+        </DialogProvider>
       </body>
     </html>
   );

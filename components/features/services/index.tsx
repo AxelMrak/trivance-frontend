@@ -1,43 +1,32 @@
-import { Service } from "@/types/Service";
-import Button from "@/components/ui/Button";
 import SearchInput from "@/components/ui/SearchInput";
-import ServiceCard from "./ServiceCard";
+import ServicesContainer from "./ServicesContainer";
+import { cookies } from "next/headers";
+import { Suspense } from "react";
+import { ServicesContainerSkeleton } from "@/components/ui/skeletons/ServicesContainerSkeleton";
 
-export default function Services({ services }: { services: Service[] }) {
+export default async function Services() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+  const res = await fetch(`${process.env.API_URL}/services/getAll`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    console.error("Error fetching services");
+    throw new Error("Failed to fetch services");
+  }
+
+  const services = await res.json();
+
   return (
     <div className="w-full min-h-[85svh] flex flex-col items-start justify-start gap-4 p-4 text-center bg-white">
-      <div className="w-full flex flex-col items-start justify-between gap-4">
-        <SearchInput placeholder="Buscar servicio" className="w-full text-2xl" />
-        <div className="w-full flex items-center justify-between gap-4">
-          <span className="text-2xl font-normal text-gray-500">
-            {services.length} servicios encontrados
-          </span>
-          <Button
-            variant="primary"
-            className="w-full md:w-auto
-              !text-2xl font-normal"
-          >
-            Crear servicio
-            +
-          </Button>
-        </div>
-      </div>
-      <section className="w-full grid grid-cols-1 md:grid-cols-2  gap-4">
-        {
-          services.length > 0 ? (
-            services.map((service) => (
-              <ServiceCard key={service.id} service={service} />
-            ))
-          ) : (
-            <div className="w-full flex items-center justify-start">
-              <p className="text-2xl font-normal text-gray-900 text-start ">
-                No se encontraron servicios. Podes crear uno nuevo haciendo click en el botón de arriba.
-              </p>
-            </div>
-          )
-        }
-      </section>
-
+      <SearchInput placeholder="Buscar servicio" className="w-full text-2xl" />
+      <Suspense fallback={<ServicesContainerSkeleton />}>
+        <ServicesContainer initialServices={services} />
+      </Suspense>
     </div>
   );
 }
