@@ -3,7 +3,6 @@ import { Urbanist, Geist } from "next/font/google";
 import "@/styles/globals.css";
 import { Toaster } from "react-hot-toast";
 import { UserProvider } from "@/context/UserContext";
-import { unstable_ViewTransition as ViewTransition } from "react";
 import { DialogProvider } from "@/context/ModalContext";
 
 const urbanist = Urbanist({
