@@ -5,8 +5,10 @@ import { Suspense } from "react";
 import { ServicesContainerSkeleton } from "@/components/ui/skeletons/ServicesContainerSkeleton";
 
 export default async function Services() {
+
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
+
   const res = await fetch(`${process.env.API_URL}/services/getAll`, {
     headers: {
       Authorization: `Bearer ${token}`,
