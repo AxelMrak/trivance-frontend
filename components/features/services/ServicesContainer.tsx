@@ -16,7 +16,9 @@ interface ServicesContainerProps {
 export default function ServicesContainer({
   initialServices,
 }: ServicesContainerProps) {
+
   const [services, setServices] = useState<Service[]>(initialServices);
+
   const { openDialog, closeDialog } = useDialog();
 
   const handleDeleteService = async (id: string): Promise<void> => {
@@ -47,6 +49,7 @@ export default function ServicesContainer({
       },
     });
   };
+
 
   const openDeleteDialog = (id: string, name?: string | null) => {
     openDialog(
