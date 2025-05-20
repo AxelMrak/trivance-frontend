@@ -3,7 +3,7 @@ import { Urbanist, Geist } from "next/font/google";
 import "@/styles/globals.css";
 import { Toaster } from "react-hot-toast";
 import { UserProvider } from "@/context/UserContext";
-import { unstable_ViewTransition as ViewTransition } from "react";
+import { DialogProvider } from "@/context/ModalContext";
 
 const urbanist = Urbanist({
   variable: "--font-urbanist",
@@ -44,14 +44,12 @@ export default function RootLayout({
         <link rel="manifest" href="/site.webmanifest" />
       </head>
       <body className={`${geist.variable} ${urbanist.className} antialiased `}>
-        <ViewTransition>
+        <DialogProvider>
           <UserProvider>
-            <main >
-              <Toaster />
-              {children}
-            </main>
+            <Toaster />
+            {children}
           </UserProvider>
-        </ViewTransition>
+        </DialogProvider>
       </body>
     </html>
   );

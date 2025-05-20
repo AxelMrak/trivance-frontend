@@ -6,7 +6,7 @@ export interface Service {
   name: string;
   description: string;
   price: number | string;
-  duration: IntervalObject;
+  duration: IntervalObject | string;
   created_at: Date | string;
 }
 
@@ -15,4 +15,12 @@ export interface CreateServicePayload {
   description: string;
   price: number;
   duration: string;
+}
+
+export interface UpdateServicePayload {
+  id: string;
+  name: string;
+  description: string;
+  price: number | string;
+  duration: string | IntervalObject;
 }
