@@ -38,7 +38,7 @@ export default function ServiceCard({
         <Button
           variant="tertiary"
           className="w-full md:w-auto
-                  !text-md font-normal !text-secondary-base border !border-gray-500 flex items-center justify-center gap-2"
+                  !text-md font-normal !text-secondary-base border !border-secondary-base flex items-center justify-center gap-2"
           onClick={() => openEditDialog(service)}
         >
           <EditIcon className="w-5 h-5 " />
