@@ -11,31 +11,31 @@ export default function ClientDetails({ client }: { client: Client }) {
 				<label className="block font-semibold text-gray-700">
 					Nombre del cliente
 				</label>
-				<p className="text-lg text-gray-900">{client.name}</p>
+				<p className="text-lg text-gray-900 pl-4">{client.name}</p>
 			</div>
 
 			<div className="mb-4">
 				<label className="block font-semibold text-gray-700">
 					Correo electrónico
 				</label>
-				<p className="text-lg text-gray-900">{client.email}</p>
+				<p className="text-lg text-gray-900 pl-4">{client.email}</p>
 			</div>
 
 			<div className="mb-4">
 				<label className="block font-semibold text-gray-700">Teléfono</label>
-				<p className="text-lg text-gray-900">{client.phone}</p>
+				<p className="text-lg text-gray-900 pl-4">{client.phone}</p>
 			</div>
 
 			<div className="mb-4">
 				<label className="block font-semibold text-gray-700">Dirección</label>
-				<p className="text-lg text-gray-900">{client.address}</p>
+				<p className="text-lg text-gray-900 pl-4">{client.address}</p>
 			</div>
 
 			<div className="mb-4">
 				<label className="block font-semibold text-gray-700">
 					Fecha de creación
 				</label>
-				<p className="text-lg text-gray-900">
+				<p className="text-lg text-gray-900 pl-4">
 					{new Date(client.created_at).toLocaleString()}
 				</p>
 			</div>
