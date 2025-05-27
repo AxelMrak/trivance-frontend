@@ -1,30 +1,18 @@
-import { Suspense } from 'react';
-import SearchInput from '@/components/ui/SearchInput';
-import ClientsContainer from './ClientContainer';
-import ClientContainerSkeleton from '@/components/ui/skeletons/ClientContainerSkeleton';
-import { cookies } from 'next/headers';
+import { Suspense } from "react";
+import SearchInput from "@/components/ui/SearchInput";
+import ClientsContainer from "./ClientContainer";
+import ClientContainerSkeleton from "@/components/ui/skeletons/ClientContainerSkeleton";
+import { fetchWithToken } from "@/lib/api/fetchWithToken";
 
 export default async function Clients() {
-	const cookieStore = await cookies();
-	const token = cookieStore.get('token')?.value;
-
-	const res = await fetch(`${process.env.API_URL}/clients/get-all`, {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-		cache: 'no-store',
-	}); 
-
-	if (!res.ok) throw new Error('Failed to fetch clients');
-
-	const clients = await res.json();
-
-	return (
-		<div className="w-full min-h-[85svh] flex flex-col items-start justify-start gap-4 p-4 text-center bg-white">
-			<SearchInput placeholder="Buscar cliente" className="..." />
-			<Suspense fallback={<ClientContainerSkeleton />}>
-				<ClientsContainer initialClients={clients} />
-			</Suspense>
-		</div>
-	);
+  const res = await fetchWithToken("/clients/getAll", "GET");
+  const clients = await res.json();
+  return (
+    <div className="w-full min-h-[85svh] flex flex-col items-start justify-start gap-4 p-4 text-center bg-white">
+      <SearchInput placeholder="Buscar cliente" className="..." />
+      <Suspense fallback={<ClientContainerSkeleton />}>
+        <ClientsContainer initialClients={clients} />
+      </Suspense>
+    </div>
+  );
 }

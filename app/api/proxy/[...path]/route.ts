@@ -7,8 +7,10 @@ export async function middlewareHandler(
   path: string[],
 ): Promise<NextResponse> {
   const token = req.cookies.get("token")?.value;
+  console.log("API URL:", API_URL);
 
   const targetUrl = `${API_URL}/${path.join("/")}`;
+  console.log("Target URL:", targetUrl);
 
   const headers = new Headers(req.headers);
   headers.set("Authorization", `Bearer ${token}`);
@@ -16,7 +18,10 @@ export async function middlewareHandler(
   const fetchOptions: RequestInit = {
     method: req.method,
     headers,
-    body: req.method !== "GET" && req.method !== "HEAD" ? await req.text() : undefined,
+    body:
+      req.method !== "GET" && req.method !== "HEAD"
+        ? await req.text()
+        : undefined,
   };
 
   const response = await fetch(targetUrl, fetchOptions);
@@ -35,22 +40,42 @@ export async function middlewareHandler(
 }
 
 // Handler for all HTTP methods
-export async function GET(req: NextRequest, { params }: { params: { path: string[] } }) {
-  return middlewareHandler(req, params.path);
+export async function GET(
+  req: NextRequest,
+  context: { params: Promise<{ path: string[] }> },
+) {
+  const { path } = await context.params;
+  return middlewareHandler(req, path);
 }
 
-export async function POST(req: NextRequest, { params }: { params: { path: string[] } }) {
-  return middlewareHandler(req, params.path);
+export async function POST(
+  req: NextRequest,
+  context: { params: Promise<{ path: string[] }> },
+) {
+  const { path } = await context.params;
+  return middlewareHandler(req, path);
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { path: string[] } }) {
-  return middlewareHandler(req, params.path);
+export async function PUT(
+  req: NextRequest,
+  context: { params: Promise<{ path: string[] }> },
+) {
+  const { path } = await context.params;
+  return middlewareHandler(req, path);
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { path: string[] } }) {
-  return middlewareHandler(req, params.path);
+export async function DELETE(
+  req: NextRequest,
+  context: { params: Promise<{ path: string[] }> },
+) {
+  const { path } = await context.params;
+  return middlewareHandler(req, path);
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: { path: string[] } }) {
-  return middlewareHandler(req, params.path);
+export async function PATCH(
+  req: NextRequest,
+  context: { params: Promise<{ path: string[] }> },
+) {
+  const { path } = await context.params;
+  return middlewareHandler(req, path);
 }
