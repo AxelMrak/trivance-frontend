@@ -9,23 +9,24 @@ import { ErrorIcon } from "@components/icons/ErrorIcon";
 const maxTextareaLength = 1500;
 
 type InputProps = {
-  label: string;
-  name: string;
-  type?: "text" | "password" | "email" | "number" | "textarea";
-  value?: string;
-  onChange?: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void;
-  onBlur?: (
-    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void;
-  error?: string;
-  disabled?: boolean;
-  placeholder?: string;
-  required?: boolean;
-  touched?: boolean;
-  className?: string;
-  rows?: number;
+	label: string;
+	name: string;
+	type?: 'text' | 'password' | 'email' | 'number' | 'textarea';
+	value?: string;
+	onChange?: (
+		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+	) => void;
+	onBlur?: (
+		e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
+	) => void;
+	error?: string;
+	disabled?: boolean;
+	placeholder?: string;
+	required?: boolean;
+	touched?: boolean;
+	className?: string;
+	rows?: number;
+	readOnly?: boolean;
 };
 
 export default function Input({
