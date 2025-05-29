@@ -1,6 +1,9 @@
 import { IntervalObject } from "@/types/Interval"
 
 export function formatInterval(interval: IntervalObject): string {
+  if (!interval || typeof interval !== 'object') {
+		return 'Sin duración definida';
+	}
   const {
     years = 0,
     months = 0,

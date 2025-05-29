@@ -7,7 +7,11 @@ import { useDialog } from '@/context/ModalContext';
 import DeleteDialog from '@/components/layouts/dialogs/DeleteDialog';
 import toast from 'react-hot-toast';
 import Button from '@/components/ui/Button';
+import ClientDetails from '@/components/features/forms/ClientDetails';
 import ClientForm from '@/components/features/forms/ClientForm';
+
+
+
 
 interface ClientsContainerProps {
 	initialClients: Client[];
@@ -18,6 +22,9 @@ export default function ClientsContainer({
 }: ClientsContainerProps) {
 	const [clients, setClients] = useState<Client[]>(initialClients);
 	const { openDialog, closeDialog } = useDialog();
+	
+
+	
 
 	const handleDeleteClient = async (id: string): Promise<void> => {
 		const deletePromise = fetch(
@@ -61,7 +68,7 @@ export default function ClientsContainer({
 	};
 
 	const openEditDialog = (client: Client) => {
-		openDialog(<ClientForm client={client} />);
+		openDialog(<ClientDetails client={client} />);
     };
 
 	return (
@@ -73,6 +80,7 @@ export default function ClientsContainer({
 				<Button
 					variant="primary"
 					className="w-full md:w-auto !text-2xl font-normal"
+					onClick={() => openDialog(<ClientForm />)}
 				>
 					Crear cliente +
 				</Button>

@@ -18,8 +18,8 @@ export default function SidebarHeader({
         />
         <button onClick={toggle} className="text-gray-700 hover:text-gray-900 cursor-pointer transition-transform hover:scale-110">
           <SidebarIcon
-            width={collapsed ? 20 : 32}
-            height={collapsed ? 20 : 32}
+            width={collapsed ? 25 : 32}
+            height={collapsed ? 25 : 32}
           />
         </button>
       </div>
