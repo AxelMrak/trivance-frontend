@@ -26,7 +26,7 @@ export default function SidebarNavItem({
       <item.icon
         className={`
           transition-all duration-300 ease-in-out
-          ${collapsed ? 'w-6 h-6' : 'w-8 h-8'}
+          ${collapsed ? 'w-9 h-9' : 'w-8 h-8'}
         `}
       />
 
