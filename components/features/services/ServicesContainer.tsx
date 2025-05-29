@@ -72,6 +72,7 @@ export default function ServicesContainer({
           {services.length} servicios encontrados
         </span>
         <Button
+          onClick={() => openDialog(<ServiceForm />)}
           variant="primary"
           className="w-full md:w-auto
               !text-2xl font-normal"
