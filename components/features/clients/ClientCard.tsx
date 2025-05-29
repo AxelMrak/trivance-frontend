@@ -5,7 +5,6 @@ import { PhoneIcon } from '@/components/icons/PhoneIcon';
 
 export default function ClientCard({
   client,
-  openDeleteDialog,
   openEditDialog,
 }: {
   client: Client;

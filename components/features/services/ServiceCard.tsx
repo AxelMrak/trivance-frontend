@@ -4,7 +4,6 @@ import { formatInterval, formatPrice } from "@/utils/format";
 import ClockIcon from "@/components/icons/ClockIcon";
 import EditIcon from "@/components/icons/EditIcon";
 import TrashIcon from "@/components/icons/TrashIcon";
-import { ServiceFormValues } from "@/lib/validation/service.schema";
 
 export default function ServiceCard({
   service,
