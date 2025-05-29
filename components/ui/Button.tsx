@@ -29,7 +29,7 @@ const Button: React.FC<ButtonProps> = ({
     secondary:
       "bg-secondary-900 text-white hover:bg-transparent hover:text-secondary-900 hover:border-secondary-900",
     tertiary:
-      "bg-white text-primary-base border border-primary-600 hover:bg-primary-50 ",
+      "bg-white text-primary-base border border-primary-600 hover:border-red-600 hover:text-red-600",
   };
 
   const disabledStyles = "opacity-50 !cursor-not-allowed";
