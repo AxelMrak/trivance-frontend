@@ -19,7 +19,7 @@ export const Sidebar = ({
   return (
     <aside
       className={`h-screen sticky top-0 bg-gray-50 text-white transition-discrete duration-300 ease-in-out p-2
-      ${collapsed ? 'w-32' : 'w-64'} flex-col items-stretch justify-between ${className}`}
+      ${collapsed ? 'w-32' : 'w-80'} flex-col items-stretch justify-between ${className}`}
     >
 
       <SidebarHeader collapsed={collapsed} toggle={toggle} />
