@@ -7,7 +7,7 @@ import { useDialog } from '@/context/ModalContext';
 import DeleteDialog from '@/components/layouts/dialogs/DeleteDialog';
 import toast from 'react-hot-toast';
 import Button from '@/components/ui/Button';
-import ClientForm from '@/components/features/forms/ClientForm';
+import ClientForm from '@/components/features/forms/ClientDetails';
 
 interface ClientsContainerProps {
 	initialClients: Client[];

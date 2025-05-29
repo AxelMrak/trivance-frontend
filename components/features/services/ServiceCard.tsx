@@ -10,10 +10,12 @@ export default function ServiceCard({
   service,
   openDeleteDialog,
   openEditDialog,
+  openViewDialog,
 }: {
   service: Service;
   openDeleteDialog: (id: string, name?: string | null) => void;
   openEditDialog: (service: Service) => void;
+  openViewDialog?: (service: Service) => void;
 }) {
   return (
     <article className="w-full flex flex-col items-start justify-between gap-4 p-4 bg-white border border-gray-300 rounded-md">
@@ -58,7 +60,9 @@ export default function ServiceCard({
           variant="primary"
           className="w-full md:w-auto
                 !text-md font-semibold"
+                onClick={() => openViewDialog?.(service)}
         >
+
           Ver detalles
         </Button>
       </div>
