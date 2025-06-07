@@ -44,7 +44,7 @@ export default function AppointmentCard({
       </div>
       <div className="w-full flex flex-col items-start justify-start gap-2">
         <span className=" text-gray-800">
-          {formatDate(appointment.start_date)}
+          {formatDate(appointment.start_date, true)}
         </span>
 
         <p className="text-gray-600 text-lg font-medium">
