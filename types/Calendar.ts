@@ -1,4 +1,4 @@
-import type { Appointment } from '@types/Appointment'
+import { Appointment } from '@types/Appointment'
 
 export interface CalendarDay {
   date: Date

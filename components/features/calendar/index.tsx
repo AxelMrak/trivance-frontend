@@ -1,10 +1,9 @@
-
 "use client"
 
 import type React from "react"
 import { useState } from "react"
-import type { Appointment } from "@types/Appointment"
-import type { CalendarDay } from "@types/Calendar"
+import { Appointment } from "@types/Appointment"
+import { CalendarDay } from "@types/Calendar"
 import { generateCalendarDays } from "@utils/functions"
 import { DAYS_OF_WEEK, MONTHS } from "@utils/const";
 import { formatDate, formatTime } from "@utils/format"

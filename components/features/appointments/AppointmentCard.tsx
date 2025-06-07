@@ -1,6 +1,5 @@
 import { Appointment } from '@/types/Appointment';
 import Button from '@/components/ui/Button';
-import TrashIcon from '@/components/icons/TrashIcon';
 import { SendIcon } from '@/components/icons/SendIcon';
 import { formatDate } from '@/utils/format';
 import Badge from '@/components/ui/Badge';

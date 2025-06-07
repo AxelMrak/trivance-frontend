@@ -1,11 +1,9 @@
 'use client';
 import { useState } from 'react';
-import { Client } from '@/types/Client';
 import { useDialog } from '@/context/ModalContext';
 import DeleteDialog from '@/components/layouts/dialogs/DeleteDialog';
 import toast from 'react-hot-toast';
 import Button from '@/components/ui/Button';
-import ClientForm from '@/components/features/forms/ClientForm';
 import AppointmentCard from '@/components/features/appointments/AppointmentCard';
 import { Appointment } from '@/types/Appointment';
 

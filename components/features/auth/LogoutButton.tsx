@@ -42,9 +42,7 @@ export const LogoutButton = ({
         `}
       onClick={handleLogout}
     >
-      <p className={`${collapsed ? 'opacity-0 max-w-0 hidden' : 'opacity-100 max-w-fit flex '
-
-        } line-clamp-1`}>
+      <p className={`${collapsed ? 'opacity-0 max-w-0 hidden' : 'opacity-100 max-w-fit flex '} line-clamp-1`}>
         Cerrar sesión
       </p>
       <LogoutIcon className="w-6 h-6" />
