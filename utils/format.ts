@@ -2,8 +2,8 @@ import { IntervalObject } from "@/types/Interval"
 
 export function formatInterval(interval: IntervalObject): string {
   if (!interval || typeof interval !== 'object') {
-		return 'Sin duración definida';
-	}
+    return 'Sin duración definida';
+  }
   const {
     years = 0,
     months = 0,
@@ -32,17 +32,26 @@ export function formatPrice(value: string | number): string {
   });
 }
 
-export function formatDate(date: string | Date): string {
+export function formatDate(date: string | Date, isDateTime: boolean | null): string {
   const d = typeof date === "string" ? new Date(date) : date;
-  return d.toLocaleDateString("es-AR", {
-    year: "numeric",
-    month: "numeric",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit"
-  });
-}
 
+  if (isDateTime) {
+    return d.toLocaleString("es-AR", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false
+    });
+  } else {
+    return d.toLocaleDateString("es-AR", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    });
+  }
+}
 export function formatTime(date: string | Date): string {
   const d = typeof date === "string" ? new Date(date) : date;
   return d.toLocaleTimeString("es-AR", {
