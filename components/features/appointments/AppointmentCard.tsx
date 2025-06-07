@@ -1,17 +1,19 @@
 import { Appointment } from '@/types/Appointment';
 import Button from '@/components/ui/Button';
 import { SendIcon } from '@/components/icons/SendIcon';
-import { formatDate } from '@/utils/format';
+import { formatDate, formatStatus } from '@/utils/format';
 import Badge from '@/components/ui/Badge';
 
 export default function AppointmentCard({
   appointment,
   openDeleteDialog,
   openEditDialog,
+  openAddToCalendarDialog
 }: {
   appointment: Appointment;
   openDeleteDialog?: (id: string, name?: string | null) => void;
   openEditDialog?: (appointment: Appointment) => void;
+  openAddToCalendarDialog?: (appointment: Appointment) => void;
 }) {
   const appointmentIsToday = new Date(appointment.start_date).toDateString() === new Date().toDateString();
   return (
@@ -30,7 +32,7 @@ export default function AppointmentCard({
                 : 'error'
           } className="capitalize
             " size="lg">
-            {appointment.status}
+            {formatStatus(appointment.status)}
           </Badge>
           {
             appointmentIsToday && (
@@ -54,15 +56,21 @@ export default function AppointmentCard({
           {appointment.description || 'Sin descripción'}
         </p>
       </div>
-      <div className="w-full grid grid-cols-1  md:grid-cols-2 gap-2 text-sm">
+      <div className="w-full grid grid-cols-1  md:grid-cols-3 gap-2 text-xs">
         <Button
           variant="secondary"
-          className="w-full flex items-center justify-center gap-2 whitespace-nowrap"
+          className="w-full flex items-center justify-center gap-2"
         >
           Enviar recordatorio
           <SendIcon className="w-5 h-5" />
         </Button>
-
+        <Button
+          variant='tertiary'
+          className="w-full"
+          onClick={() => openAddToCalendarDialog(appointment)}
+        >
+          Agregar al calendario
+        </Button>
         <Button
           variant="primary"
           className="w-full"
