@@ -19,7 +19,6 @@ export default function ClientCard({
       <header className="w-full flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <h2 className="text-xl font-semibold text-gray-800 truncate">{client.name}</h2>
-
         </div>
         <CustomLink
           href={`mailto:${client.email}`}
