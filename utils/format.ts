@@ -60,4 +60,17 @@ export function formatTime(date: string | Date): string {
   });
 }
 
-
+export function formatStatus(status: string): string {
+  switch (status) {
+    case "pending":
+      return "Pendiente";
+    case "confirmed":
+      return "Confirmado";
+    case "cancelled":
+      return "Cancelado";
+    case "completed":
+      return "Completado";
+    default:
+      return "Desconocido";
+  }
+}

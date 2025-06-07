@@ -1,11 +1,14 @@
 'use client';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useDialog } from '@/context/ModalContext';
 import DeleteDialog from '@/components/layouts/dialogs/DeleteDialog';
 import toast from 'react-hot-toast';
 import Button from '@/components/ui/Button';
 import AppointmentCard from '@/components/features/appointments/AppointmentCard';
 import { Appointment } from '@/types/Appointment';
+import { generateCalendarLinks } from '@/utils/functions';
+import { CustomLink } from '@/components/ui/CustomLink';
+import Link from 'next/link';
 
 interface AppointmentsContainerProps {
   initialAppointments: Appointment[];
@@ -62,6 +65,34 @@ export default function AppointmentsContainer({
   const openEditDialog = (appointment: Appointment) => {
   };
 
+  const openAddToCalendarDialog = (appointment: Appointment) => {
+    const links = generateCalendarLinks({
+      title: `Turno con ${appointment.user?.name}`,
+      description: appointment.description || 'Sin descripción',
+      location: appointment.service?.location || 'Sin ubicación',
+      start: new Date(appointment.start_date),
+      end: new Date(appointment.end_date || appointment.start_date),
+    });
+    openDialog(
+      <div className="p-4 w-full flex flex-col items-start justify-start gap-4">
+        <h2 className="text-xl font-semibold mb-4">Agregar a Calendario</h2>
+        <div className='w-full grid grid-cols-3 items-center justify-center gap-4'>
+          {
+            Object.entries(links).map(([key, link]) => (
+              <Link
+                className="bg-gray-50 text-gray-800 hover:bg-gray-100  rounded-md px-6 py-4 mb-2 w-full shadow border border-gray-200 flex items-center justify-center"
+                key={key}
+                href={link.link}
+              >
+                <link.icon className='w-14 h-14' />
+              </Link>
+            ))
+          }
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="w-full flex flex-col items-start justify-between gap-4">
       <div className="w-full flex items-center justify-between gap-4">
@@ -85,6 +116,7 @@ export default function AppointmentsContainer({
               appointment={appointment}
               openDeleteDialog={openDeleteDialog}
               openEditDialog={openEditDialog}
+              openAddToCalendarDialog={openAddToCalendarDialog}
             />
           ))
         ) : (
