@@ -1,11 +1,16 @@
 import { Appointment } from "@/types/Appointment";
 import Button from "@/components/ui/Button";
 import { SendIcon } from "@/components/icons/SendIcon";
-import { formatDate, formatStatus } from "@/utils/format";
+import { formatStatus } from "@/utils/format";
 import Badge from "@/components/ui/Badge";
 import RoleGuard from "@/components/features/global/RoleGuard";
 import { UserRole } from "@/types/User";
 
+import dynamic from "next/dynamic";
+
+const AppointmentDate = dynamic(() => import("./AppointmentDate"), {
+  ssr: false,
+});
 export default function AppointmentCard({
   appointment,
   openDeleteDialog,
@@ -51,9 +56,7 @@ export default function AppointmentCard({
         </div>
       </div>
       <div className="w-full flex flex-col items-start justify-start gap-2">
-        <span className=" text-gray-800">
-          {formatDate(appointment.start_date, true)}
-        </span>
+        <AppointmentDate date={appointment.start_date} />
 
         <p className="text-gray-600 text-lg font-medium">
           {appointment.service?.name || "Servicio no disponible"}
