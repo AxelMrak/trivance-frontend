@@ -68,9 +68,11 @@ const CardContent = ({
 }) => <div className={`${className}`}>{children}</div>;
 
 interface FormData {
+  user_id: string;
   service_id: string;
   date: string;
   time: string;
+  start_date?: string; // Optional, used for API request
   description: string;
   status: "pending" | "confirmed" | "cancelled";
 }
@@ -94,11 +96,13 @@ export default function AppointmentForm({
   appointments: Appointment[];
 }) {
   const [currentStep, setCurrentStep] = useState(1);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const { user } = useUser();
   const [formData, setFormData] = useState<FormData>({
+    user_id: user?.user?.id || "",
     service_id: "",
     date: "",
     time: "",
+    start_date: "", // This will be set based on date and time
     description: "",
     status: "pending",
   });
@@ -170,7 +174,7 @@ export default function AppointmentForm({
   };
 
   const handleDateSelect = (date: string) => {
-    setFormData({ ...formData, date, time: "" });
+    setFormData({ ...formData, start_date: date, time: "", date });
   };
 
   const handleTimeSelect = (time: string) => {
@@ -201,7 +205,7 @@ export default function AppointmentForm({
 
   const handlePayAndReserve = async () => {
     await toast.promise(
-      (async () => {
+      async () => {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/appointments/create`,
           {
@@ -233,8 +237,8 @@ export default function AppointmentForm({
           throw new Error("No se pudo generar el link de pago");
 
         const payment = await paymentRes.json();
-        window.location.href = payment.init_point;
-      })(),
+        window.location.href = payment.paymentLink;
+      },
       {
         loading: "Procesando pago y reserva...",
         success: "Turno reservado y redirigiendo al pago",
@@ -250,6 +254,8 @@ export default function AppointmentForm({
       date: "",
       time: "",
       description: "",
+      user_id: user?.user?.id || "",
+      start_date: "",
       status: "pending",
     });
   };
@@ -287,11 +293,10 @@ export default function AppointmentForm({
                 services.map((service) => (
                   <div
                     key={service.id}
-                    className={`p-4 border rounded-lg cursor-pointer transition-all ${
-                      formData.service_id === service.id
+                    className={`p-4 border rounded-lg cursor-pointer transition-all ${formData.service_id === service.id
                         ? "border-blue-500 bg-blue-50"
                         : "border-gray-200 hover:border-gray-300"
-                    }`}
+                      }`}
                     onClick={() => handleServiceSelect(service.id)}
                   >
                     <div className="flex justify-between items-start flex-wrap">
@@ -343,13 +348,12 @@ export default function AppointmentForm({
                 {generateCalendarDays().map((day, index) => (
                   <button
                     key={index}
-                    className={`p-2 text-sm rounded-lg border transition-all ${
-                      formData.date === day.date
+                    className={`p-2 text-sm rounded-lg border transition-all ${formData.date === day.date
                         ? "bg-blue-500 text-white border-blue-500"
                         : day.isOccupied
                           ? "bg-red-100 text-red-500 border-red-200 cursor-not-allowed"
                           : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
-                    }`}
+                      }`}
                     onClick={() =>
                       !day.isOccupied && handleDateSelect(day.date)
                     }
@@ -374,13 +378,12 @@ export default function AppointmentForm({
                     return (
                       <button
                         key={time}
-                        className={`p-3 text-sm rounded-lg border transition-all ${
-                          formData.time === time
+                        className={`p-3 text-sm rounded-lg border transition-all ${formData.time === time
                             ? "bg-blue-500 text-white border-blue-500"
                             : isOccupied
                               ? "bg-red-100 text-red-500 border-red-200 cursor-not-allowed"
                               : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
-                        }`}
+                          }`}
                         onClick={() => !isOccupied && handleTimeSelect(time)}
                         disabled={isOccupied}
                       >
@@ -475,7 +478,7 @@ export default function AppointmentForm({
 
             <div className="space-y-4">
               <RoleGuard
-                minRole={UserRole.GUEST}
+                minRole={UserRole.STAFF}
                 fallback={
                   <>
                     {selectedService?.requires_deposit && (
