@@ -16,6 +16,9 @@ import { Appointment } from "@/types/Appointment";
 import RoleGuard from "../global/RoleGuard";
 import { UserRole } from "@/types/User";
 import toast from "react-hot-toast";
+import { ErrorIcon } from "@/components/icons/ErrorIcon";
+import MPLogo from "@/components/icons/MPLogo";
+import AppointmentIcon from "@/components/icons/AppointmentIcon";
 
 const Card = ({
   children,
@@ -237,7 +240,8 @@ export default function AppointmentForm({
           throw new Error("No se pudo generar el link de pago");
 
         const payment = await paymentRes.json();
-        window.location.href = payment.paymentLink;
+
+        window.open(payment.paymentLink, "_blank");
       },
       {
         loading: "Procesando pago y reserva...",
@@ -293,10 +297,11 @@ export default function AppointmentForm({
                 services.map((service) => (
                   <div
                     key={service.id}
-                    className={`p-4 border rounded-lg cursor-pointer transition-all ${formData.service_id === service.id
+                    className={`p-4 border rounded-lg cursor-pointer transition-all ${
+                      formData.service_id === service.id
                         ? "border-blue-500 bg-blue-50"
                         : "border-gray-200 hover:border-gray-300"
-                      }`}
+                    }`}
                     onClick={() => handleServiceSelect(service.id)}
                   >
                     <div className="flex justify-between items-start flex-wrap">
@@ -325,7 +330,7 @@ export default function AppointmentForm({
             <div className="flex justify-end">
               <Button onClick={handleNext} disabled={!formData.service_id}>
                 Siguiente
-                <ChevronIcon className="w-4 h-4 ml-2" />
+                <ChevronIcon className="w-4 h-4 ml-2 rotate-90" />
               </Button>
             </div>
           </CardContent>
@@ -341,19 +346,20 @@ export default function AppointmentForm({
             </CardTitle>
             <CardDescription>Elige cuándo quieres tu cita</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-6 w-full">
             <div>
               <label className="text-base font-medium">Fecha</label>
               <div className="grid grid-cols-7 gap-2 mt-2">
                 {generateCalendarDays().map((day, index) => (
                   <button
                     key={index}
-                    className={`p-2 text-sm rounded-lg border transition-all ${formData.date === day.date
+                    className={`p-2 text-sm rounded-lg border transition-all flex flex-col items-center justify-center ${
+                      formData.date === day.date
                         ? "bg-blue-500 text-white border-blue-500"
                         : day.isOccupied
                           ? "bg-red-100 text-red-500 border-red-200 cursor-not-allowed"
                           : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
-                      }`}
+                    }`}
                     onClick={() =>
                       !day.isOccupied && handleDateSelect(day.date)
                     }
@@ -361,7 +367,7 @@ export default function AppointmentForm({
                   >
                     {day.day}
                     {day.isOccupied && (
-                      <div className="text-xs mt-1">Ocupado</div>
+                      <ErrorIcon className="w-4 h-4 inline text-red-500" />
                     )}
                   </button>
                 ))}
@@ -378,12 +384,13 @@ export default function AppointmentForm({
                     return (
                       <button
                         key={time}
-                        className={`p-3 text-sm rounded-lg border transition-all ${formData.time === time
+                        className={`p-3 text-sm rounded-lg border transition-all ${
+                          formData.time === time
                             ? "bg-blue-500 text-white border-blue-500"
                             : isOccupied
                               ? "bg-red-100 text-red-500 border-red-200 cursor-not-allowed"
                               : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
-                          }`}
+                        }`}
                         onClick={() => !isOccupied && handleTimeSelect(time)}
                         disabled={isOccupied}
                       >
@@ -397,7 +404,7 @@ export default function AppointmentForm({
             )}{" "}
             <div className="flex justify-between">
               <Button variant="tertiary" onClick={handlePrevious}>
-                <ChevronIcon className="w-4 h-4 mr-2" />
+                <ChevronIcon className="w-4 h-4 mr-2 -rotate-90" />
                 Anterior
               </Button>
               <Button
@@ -405,7 +412,7 @@ export default function AppointmentForm({
                 disabled={!formData.date || !formData.time}
               >
                 Siguiente
-                <ChevronIcon className="w-4 h-4 ml-2" />
+                <ChevronIcon className="w-4 h-4 ml-2 rotate-90" />
               </Button>
             </div>
           </CardContent>
@@ -454,7 +461,7 @@ export default function AppointmentForm({
                 onChange={(e) =>
                   setFormData({ ...formData, description: e.target.value })
                 }
-                className="min-h-[100px] w-full border rounded-lg p-2"
+                className="min-h-[100px] w-full border rounded-lg p-2 border border-gray-200"
               />
             </div>
             <RoleGuard minRole={UserRole.STAFF} fallback={<></>}>
@@ -476,39 +483,37 @@ export default function AppointmentForm({
               </div>
             </RoleGuard>
 
-            <div className="space-y-4">
+            <div className="space-y-4 mt-4">
               <RoleGuard
                 minRole={UserRole.STAFF}
                 fallback={
                   <>
                     {selectedService?.requires_deposit && (
-                      <Badge variant="secondary" className="mb-2">
+                      <Badge variant="secondary" className="mb-2 " size="lg">
                         Se guardará el turno por 30 minutos sin pagar la seña
                       </Badge>
                     )}
 
-                    <div className="flex justify-between">
-                      <Button variant="tertiary" onClick={handlePrevious}>
-                        <ChevronIcon className="w-4 h-4 mr-2" />
-                        Anterior
-                      </Button>
-                      <div className="flex gap-2">
-                        <Button variant="secondary" onClick={handleCancel}>
-                          Cancelar
-                        </Button>
-                        <Button variant="primary" onClick={handleReserve}>
-                          Reservar
-                        </Button>
-
+                    <div className="w-full flex items-center justify-between">
+                      <div className="w-full grid grid-cols-1  gap-4">
                         {selectedService?.requires_deposit ? (
                           <>
-                            <Button onClick={handlePayAndReserve}>
+                            <button
+                              className=" px-4 py-2 rounded-lg transition-colors text-blue-500 border border-blue-500 hover:bg-blue-50 flex items-center whitespace-nowrap text-center justify-center font-semibold"
+                              onClick={handlePayAndReserve}
+                            >
+                              <MPLogo className="w-12 h-auto inline mr-2" />
                               Pagar y Reservar
-                            </Button>
+                            </button>
                           </>
-                        ) : (
-                          <Button onClick={handleReserve}>Reservar</Button>
-                        )}
+                        ) : null}
+                        <Button
+                          variant="primary"
+                          onClick={handleReserve}
+                          className="flex items-center px-4 py-2 rounded-lg transition-colors whitespace-nowrap text-center justify-center font-semibold !text-xl"
+                        >
+                          Reservar
+                        </Button>
                       </div>
                     </div>
                   </>

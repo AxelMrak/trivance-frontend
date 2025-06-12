@@ -15,7 +15,6 @@ export default function HeaderMobile({
 }: {
   className?: string;
 }) {
-
   const [isOpen, setIsOpen] = useState(false);
 
   const handleCloseMenu = () => {
@@ -24,10 +23,12 @@ export default function HeaderMobile({
 
   const handleMenuSwitch = () => {
     setIsOpen((prev) => !prev);
-  }
+  };
 
   return (
-    <header className={`flex flex-col w-full bg-white text-primary-base ${className} sticky top-0 z-50 min-h-screen`}>
+    <header
+      className={`flex flex-col w-full bg-white text-primary-base ${className} ${isOpen ? "h-screen fixed inset-0 z-50" : "h-fit"} `}
+    >
       <div className="flex flex-row items-center justify-between gap-4 w-full p-4  bg-white grow-0">
         <LogoColor className="w-28 h-28" id="HeaderMobile" />
         <div className="flex flex-row items-center gap-4">
@@ -54,20 +55,18 @@ export default function HeaderMobile({
               <NotificationIcon className="w-8 h-8" />
               <span
                 className="
-        absolute top-1 right-1 bg-secondary-base text-white 
+        absolute top-1 right-1 bg-secondary-base text-white
         rounded-full w-2 h-2 flex items-center justify-center
         font-semibold shadow-md"
-              >
-              </span>
+              ></span>
             </div>
           </Button>
-
         </div>
       </div>
 
       <div
         className={`
-          w-full overflow-hidden transition-all duration-300 ease-in-out px-8 grow flex flex-col justify-between items-start gap-4
+          w-full overflow-hidden transition-all duration-300 ease-in-out px-8 grow flex flex-col justify-between items-start gap-4 sticky top-0
           ${isOpen ? "max-h-full py-6" : "max-h-0 py-0"}
         `}
       >
@@ -80,5 +79,3 @@ export default function HeaderMobile({
     </header>
   );
 }
-
-

@@ -21,7 +21,7 @@ const Button: React.FC<ButtonProps> = ({
   isLoading = false,
 }) => {
   const baseStyles =
-    "inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 shadow hover:shadow-sm transition-all cursor-pointer border border-transparent";
+    "inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 shadow hover:shadow-sm transition-all cursor-pointer transition-colors ";
 
   const variants = {
     primary:
@@ -29,7 +29,7 @@ const Button: React.FC<ButtonProps> = ({
     secondary:
       "bg-secondary-900 text-white hover:bg-transparent hover:text-secondary-900 hover:border-secondary-900",
     tertiary:
-      "bg-white text-primary-base border border-primary-600 hover:border-red-600 hover:text-red-600",
+      "bg-white text-primary-base border border-primary-base hover:border-primary-600 hover:text-primary-600 hover:bg-transparent",
   };
 
   const disabledStyles = "opacity-50 !cursor-not-allowed";
