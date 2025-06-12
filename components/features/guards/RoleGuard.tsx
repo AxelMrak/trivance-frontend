@@ -12,7 +12,7 @@ export default function RoleGuard({minRole, fallback, children}: RoleGuardProps)
     const { user } = useUser();
     
     if(!user.user ||  user.user.role < minRole) {
-        return <>{fallback || <p>No tienes permisos suficientes para acceder a esta página</p>}</>;
+        return <>{fallback}</>;
     }
     return <>{children}</>;
 }

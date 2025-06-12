@@ -1,5 +1,6 @@
+// AppointmentsContainer.tsx
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // Importa useEffect
 import { useDialog } from '@/context/ModalContext';
 import DeleteDialog from '@/components/layouts/dialogs/DeleteDialog';
 import toast from 'react-hot-toast';
@@ -9,17 +10,26 @@ import { Appointment } from '@/types/Appointment';
 import { generateCalendarLinks } from '@/utils/functions';
 import { CustomLink } from '@/components/ui/CustomLink';
 import Link from 'next/link';
+import AppointmentForm from '../forms/AppointmentForm'; // Importa AppointmentForm
+import { Service } from '@/types/Service'; // Importa el tipo Service
 
 interface AppointmentsContainerProps {
   initialAppointments: Appointment[];
-
+  initialServices: Service[]; // Agrega la prop para los servicios
 }
 
 export default function AppointmentsContainer({
   initialAppointments,
+  initialServices, // Recibe la prop para los servicios
 }: AppointmentsContainerProps) {
   const [appointments, setAppointments] = useState<Appointment[]>(initialAppointments);
+  const [services, setServices] = useState<Service[]>(initialServices); // Estado local para los servicios
   const { openDialog, closeDialog } = useDialog();
+
+  //  useEffect para actualizar los servicios si initialServices cambia
+  useEffect(() => {
+    setServices(initialServices);
+  }, [initialServices]);
 
   const handleDeleteClient = async (id: string): Promise<void> => {
     const deletePromise = fetch(
@@ -102,6 +112,7 @@ export default function AppointmentsContainer({
         <Button
           variant="primary"
           className="w-full md:w-auto !text-2xl font-normal"
+          onClick={() => openDialog(<AppointmentForm services={services} />)} // Pasa los servicios como prop
         >
           Crear turno +
         </Button>
