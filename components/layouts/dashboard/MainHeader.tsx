@@ -5,9 +5,11 @@ import { useUser } from "@/context/UserContext";
 
 export const MainHeader = ({ title }: { title?: string }) => {
   const { user } = useUser();
+  const userName = user?.user?.name || 'Usuario';
 
   const [time, setTime] = useState<string | null>(null);
   const [date, setDate] = useState<string | null>(null);
+
 
   useEffect(() => {
     const now = new Date();
@@ -29,7 +31,7 @@ export const MainHeader = ({ title }: { title?: string }) => {
   return (
     <header className="flex items-center justify-between p-4 bg-primary-base text-white w-full rounded-md">
       <h1 className="text-4xl font-normal capitalize">
-        {title || `Hola ${user?.user?.name || "Usuario"}!`}
+        {title || `Hola ${userName}!`}
       </h1>
       <p className="text-4xl text-white font-normal">
         {time}
