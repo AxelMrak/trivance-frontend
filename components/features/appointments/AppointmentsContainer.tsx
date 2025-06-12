@@ -103,6 +103,7 @@ export default function AppointmentsContainer({
     );
   };
 
+  console.log(initialServices);
   return (
     <div className="w-full flex flex-col items-start justify-between gap-4">
       <div className="w-full flex items-center justify-between gap-4">
@@ -112,13 +113,20 @@ export default function AppointmentsContainer({
         <Button
           variant="primary"
           className="w-full md:w-auto !text-2xl font-normal"
-          onClick={() => openDialog(<AppointmentForm services={services} />)}
+          onClick={() =>
+            openDialog(
+              <AppointmentForm
+                services={initialServices}
+                appointments={appointments}
+              />,
+            )
+          }
         >
           Crear turno +
         </Button>
       </div>
 
-      <section className="w-full grid grid-cols-1 md:grid-cols-4  gap-4">
+      <section className="w-full grid grid-cols-1 md:grid-cols-3  gap-4">
         {appointments.length > 0 ? (
           appointments.map((appointment: Appointment) => (
             <AppointmentCard
@@ -141,4 +149,3 @@ export default function AppointmentsContainer({
     </div>
   );
 }
-
