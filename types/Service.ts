@@ -8,6 +8,8 @@ export interface Service {
   price: number | string;
   duration: IntervalObject | string;
   created_at: Date | string;
+  location?: string | null;
+  requires_deposit?: boolean;
 }
 
 export interface CreateServicePayload {

@@ -33,7 +33,7 @@ function userReducer(state: UserState, action: UserAction): UserState {
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, userDispatch] = useReducer(userReducer, initialState);
-
+  console.log("UserProvider user:", user);
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {

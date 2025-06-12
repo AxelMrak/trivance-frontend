@@ -1,13 +1,14 @@
-'use client';
+"use client";
 
-import Input from '@/components/ui/Input';
-import { ClientFormValues, clientSchema } from '@/lib/validation/client.schema';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Controller, useForm } from 'react-hook-form';
-import { Client } from '@/types/Client';
-import Button from '@/components/ui/Button';
-import SaveIcon from '@/components/icons/SaveIcon';
-import DiscardIcon from '@/components/icons/DiscardIcon';
+import Input from "@/components/ui/Input";
+import { ClientFormValues, clientSchema } from "@/lib/validation/client.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
+import { Client } from "@/types/Client";
+import Button from "@/components/ui/Button";
+import SaveIcon from "@/components/icons/SaveIcon";
+import DiscardIcon from "@/components/icons/DiscardIcon";
+import toast from "react-hot-toast";
 
 export default function ClientForm({
   initialClient,
@@ -23,10 +24,10 @@ export default function ClientForm({
   } = useForm<ClientFormValues>({
     resolver: zodResolver(clientSchema),
     defaultValues: {
-      name: initialClient?.name || '',
-      email: initialClient?.email || '',
-      phone: initialClient?.phone || '',
-      address: initialClient?.address || '',
+      name: initialClient?.name || "",
+      email: initialClient?.email || "",
+      phone: initialClient?.phone || "",
+      address: initialClient?.address || "",
     },
   });
 
@@ -34,30 +35,38 @@ export default function ClientForm({
     const url = initialClient
       ? `${process.env.NEXT_PUBLIC_API_URL}/clients/update/${initialClient.id}`
       : `${process.env.NEXT_PUBLIC_API_URL}/clients/create`;
-    const method = initialClient ? 'PUT' : 'POST';
-    try {
-      const response = await fetch(url, {
+    const method = initialClient ? "PUT" : "POST";
+
+    await toast.promise(
+      fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
-        credentials: 'include',
-      });
-
-      if (!response.ok) throw new Error('Error al guardar el cliente');
-
-      reset();
-    } catch (error) {
-      console.error(error);
-    }
+        credentials: "include",
+      }).then(async (response) => {
+        if (!response.ok) {
+          throw new Error("Error al guardar el cliente");
+        }
+        reset();
+      }),
+      {
+        loading: initialClient
+          ? "Actualizando cliente..."
+          : "Creando cliente...",
+        success: initialClient
+          ? "Cliente actualizado con éxito"
+          : "Cliente creado con éxito",
+        error: "Hubo un error al guardar el cliente",
+      },
+    );
   };
-
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="w-full flex flex-col items-start justify-start gap-4"
     >
       <h2 className="text-2xl font-normal mb-4">
-        {initialClient ? 'Actualizar cliente' : 'Crear cliente'}
+        {initialClient ? "Actualizar cliente" : "Crear cliente"}
       </h2>
 
       <Controller
@@ -120,7 +129,7 @@ export default function ClientForm({
           className="w-full"
         >
           <SaveIcon className="w-4 h-4 mr-2" />
-          {initialClient ? 'Actualizar cliente' : 'Crear cliente'}
+          {initialClient ? "Actualizar cliente" : "Crear cliente"}
         </Button>
         <Button
           variant="tertiary"

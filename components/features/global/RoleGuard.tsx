@@ -14,7 +14,6 @@ export default function RoleGuard({
   children,
 }: RoleGuardProps) {
   const { user } = useUser();
-
   if (!user.user || user.user.role < minRole) {
     return <>{fallback}</>;
   }

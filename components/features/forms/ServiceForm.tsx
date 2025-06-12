@@ -12,6 +12,7 @@ import { Service } from "@/types/Service";
 import Button from "@/components/ui/Button";
 import SaveIcon from "@/components/icons/SaveIcon";
 import DiscardIcon from "@/components/icons/DiscardIcon";
+import toast from "react-hot-toast";
 
 export default function ServiceForm({
   initialService,
@@ -46,29 +47,39 @@ export default function ServiceForm({
       ? `${process.env.NEXT_PUBLIC_API_URL}/services/update/${initialService.id}`
       : `${process.env.NEXT_PUBLIC_API_URL}/services/create`;
     const method = initialService ? "PUT" : "POST";
-    try {
-      const response = await fetch(url, {
+
+    await toast.promise(
+      fetch(url, {
         method,
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(serviceData),
         credentials: "include",
-      });
-      if (!response.ok) {
-        throw new Error("Error al guardar el servicio");
-      }
-      reset();
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-
+      }).then(async (response) => {
+        if (!response.ok) {
+          throw new Error("Error al guardar el servicio");
+        }
+        reset();
+      }),
+      {
+        loading: initialService
+          ? "Actualizando servicio..."
+          : "Creando servicio...",
+        success: initialService
+          ? "Servicio actualizado con éxito"
+          : "Servicio creado con éxito",
+        error: "Hubo un error al guardar el servicio",
+      },
+    );
+  };
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="w-full flex flex-col items-start justify-start gap-4">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="w-full flex flex-col items-start justify-start gap-4"
+    >
       <h2 className="text-2xl font-normal mb-4">
-        {initialService ? 'Actualizar servicio' : 'Crear servicio'}
+        {initialService ? "Actualizar servicio" : "Crear servicio"}
       </h2>
       <Controller
         name="name"
@@ -115,14 +126,24 @@ export default function ServiceForm({
         name="duration"
         control={control}
         render={({ field }) => (
-          <Input {...field} label="Duración del servicio" placeholder="45 min, 1 hour, 2 weeks, etc" error={errors.duration?.message} />
+          <Input
+            {...field}
+            label="Duración del servicio"
+            placeholder="45 min, 1 hour, 2 weeks, etc"
+            error={errors.duration?.message}
+          />
         )}
       />
 
       <div className="w-full grid grid-cols-2 items-center gap-4 ">
-        <Button variant="primary" type="submit" disabled={Object.keys(errors).length > 0 || isSubmitting} className="w-full">
+        <Button
+          variant="primary"
+          type="submit"
+          disabled={Object.keys(errors).length > 0 || isSubmitting}
+          className="w-full"
+        >
           <SaveIcon className="w-4 h-4 mr-2" />
-          {initialService ? 'Actualizar servicio' : 'Crear servicio'}
+          {initialService ? "Actualizar servicio" : "Crear servicio"}
         </Button>
         <Button
           variant="tertiary"

@@ -44,12 +44,12 @@ export default function RootLayout({
         <link rel="manifest" href="/site.webmanifest" />
       </head>
       <body className={`${geist.variable} ${urbanist.className} antialiased `}>
-        <DialogProvider>
-          <UserProvider>
+        <UserProvider>
+          <DialogProvider>
             <Toaster />
             {children}
-          </UserProvider>
-        </DialogProvider>
+          </DialogProvider>
+        </UserProvider>
       </body>
     </html>
   );
