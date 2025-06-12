@@ -27,7 +27,7 @@ export default function HeaderMobile({
 
   return (
     <header
-      className={`flex flex-col w-full bg-white text-primary-base ${className} ${isOpen ? "h-screen fixed inset-0" : "h-fit"} `}
+      className={`flex flex-col w-full bg-white text-primary-base ${className} ${isOpen ? "h-screen fixed inset-0 z-50" : "h-fit"} `}
     >
       <div className="flex flex-row items-center justify-between gap-4 w-full p-4  bg-white grow-0">
         <LogoColor className="w-28 h-28" id="HeaderMobile" />
