@@ -7,11 +7,8 @@ import { useDialog } from '@/context/ModalContext';
 import DeleteDialog from '@/components/layouts/dialogs/DeleteDialog';
 import toast from 'react-hot-toast';
 import Button from '@/components/ui/Button';
-import ClientDetails from '@/components/features/forms/ClientDetails';
 import ClientForm from '@/components/features/forms/ClientForm';
-
-
-
+import { ClientFormValues } from '@/lib/validation/client.schema';
 
 interface ClientsContainerProps {
   initialClients: Client[];
@@ -23,13 +20,81 @@ export default function ClientsContainer({
   const [clients, setClients] = useState<Client[]>(initialClients);
   const { openDialog, closeDialog } = useDialog();
 
+  const handleCreateClient = async (data: ClientFormValues) => {
+    const createPromise = fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/clients/create`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+        credentials: 'include',
+      },
+    ).then(async (response) => {
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Error al crear el cliente');
+      }
+      const newClient = await response.json();
+      setClients((prev) => [...prev, newClient]);
+      closeDialog();
+      return 'Cliente creado correctamente';
+    });
+
+    toast.promise(createPromise, {
+      loading: 'Creando cliente...',
+      success: (message) => message,
+      error: (error: any) => {
+        console.error(error);
+        return error.message || 'Error al crear el cliente';
+      },
+    });
+  };
+
+  const handleEditClient = async (id: string, data: ClientFormValues) => {
+    const editPromise = fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/clients/update/${id}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+        credentials: 'include',
+      },
+    ).then(async (response) => {
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Error al actualizar el cliente');
+      }
+      const updatedClient = await response.json();
+      setClients((prev) =>
+        prev.map((client) =>
+          client.id === updatedClient.id ? updatedClient : client,
+        ),
+      );
+      closeDialog();
+      return 'Cliente actualizado correctamente';
+    });
+
+    toast.promise(editPromise, {
+      loading: 'Actualizando cliente...',
+      success: (message) => message,
+      error: (error: any) => {
+        console.error(error);
+        return error.message || 'Error al actualizar el cliente';
+      },
+    });
+  };
+
   const handleDeleteClient = async (id: string): Promise<void> => {
     const deletePromise = fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/clients/delete/${id}`,
       {
         method: 'DELETE',
         credentials: 'include',
-      }
+      },
     ).then(async (response) => {
       if (!response.ok) {
         const errorText = await response.text();
@@ -54,18 +119,30 @@ export default function ClientsContainer({
     });
   };
 
+  const openCreateDialog = () => {
+    openDialog(
+      <ClientForm onSubmit={handleCreateClient} onClose={closeDialog} />,
+    );
+  };
+
   const openDeleteDialog = (id: string, name?: string | null) => {
     openDialog(
       <DeleteDialog
         data={{ id, title: name || null }}
         onClose={closeDialog}
         onDelete={() => handleDeleteClient(id)}
-      />
+      />,
     );
   };
 
   const openEditDialog = (client: Client) => {
-    openDialog(<ClientForm initialClient={client} />)
+    openDialog(
+      <ClientForm
+        initialClient={client}
+        onSubmit={(data) => handleEditClient(client.id, data)}
+        onClose={closeDialog}
+      />,
+    );
   };
 
   return (
@@ -75,9 +152,9 @@ export default function ClientsContainer({
           {clients.length} clientes encontrados
         </span>
         <Button
+          onClick={openCreateDialog}
           variant="primary"
           className="w-full md:w-auto !text-2xl font-normal"
-          onClick={() => openDialog(<ClientForm />)}
         >
           Crear cliente +
         </Button>
