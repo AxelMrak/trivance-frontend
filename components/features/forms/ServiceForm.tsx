@@ -12,13 +12,18 @@ import { Service } from "@/types/Service";
 import Button from "@/components/ui/Button";
 import SaveIcon from "@/components/icons/SaveIcon";
 import DiscardIcon from "@/components/icons/DiscardIcon";
-import toast from "react-hot-toast";
+
+interface ServiceFormProps {
+  initialService?: Service;
+  onSubmit: (data: ServiceFormValues) => Promise<void>;
+  onClose: () => void;
+}
 
 export default function ServiceForm({
   initialService,
-}: {
-  initialService?: Service;
-}) {
+  onSubmit,
+  onClose,
+}: ServiceFormProps) {
   const {
     register,
     handleSubmit,
@@ -35,47 +40,13 @@ export default function ServiceForm({
     },
   });
 
-  const onSubmit = async (data: ServiceFormValues) => {
-    const { name, description, price, duration } = data;
-    const serviceData = {
-      name,
-      description,
-      price: Number(price),
-      duration: duration,
-    };
-    const url = initialService
-      ? `${process.env.NEXT_PUBLIC_API_URL}/services/update/${initialService.id}`
-      : `${process.env.NEXT_PUBLIC_API_URL}/services/create`;
-    const method = initialService ? "PUT" : "POST";
-
-    await toast.promise(
-      fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(serviceData),
-        credentials: "include",
-      }).then(async (response) => {
-        if (!response.ok) {
-          throw new Error("Error al guardar el servicio");
-        }
-        reset();
-      }),
-      {
-        loading: initialService
-          ? "Actualizando servicio..."
-          : "Creando servicio...",
-        success: initialService
-          ? "Servicio actualizado con éxito"
-          : "Servicio creado con éxito",
-        error: "Hubo un error al guardar el servicio",
-      },
-    );
+  const handleFormSubmit = async (data: ServiceFormValues) => {
+    await onSubmit(data);
   };
+
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(handleFormSubmit)}
       className="w-full flex flex-col items-start justify-start gap-4"
     >
       <h2 className="text-2xl font-normal mb-4">
@@ -147,12 +118,11 @@ export default function ServiceForm({
         </Button>
         <Button
           variant="tertiary"
-          disabled={Object.keys(dirtyFields).length === 0}
-          onClick={() => reset()}
+          onClick={onClose}
           className="w-full disable:opacity-50 disabled:text-gray-500 disabled:cursor-not-allowed"
         >
           <DiscardIcon className="w-4 h-4 mr-2" />
-          Deshacer cambios
+          Cancelar
         </Button>
       </div>
     </form>
