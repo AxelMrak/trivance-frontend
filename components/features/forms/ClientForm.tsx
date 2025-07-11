@@ -8,13 +8,18 @@ import { Client } from "@/types/Client";
 import Button from "@/components/ui/Button";
 import SaveIcon from "@/components/icons/SaveIcon";
 import DiscardIcon from "@/components/icons/DiscardIcon";
-import toast from "react-hot-toast";
+
+interface ClientFormProps {
+  initialClient?: Client;
+  onSubmit: (data: ClientFormValues) => Promise<void>;
+  onClose: () => void;
+}
 
 export default function ClientForm({
   initialClient,
-}: {
-  initialClient?: Client;
-}) {
+  onSubmit,
+  onClose,
+}: ClientFormProps) {
   const {
     register,
     handleSubmit,
@@ -31,38 +36,13 @@ export default function ClientForm({
     },
   });
 
-  const onSubmit = async (data: ClientFormValues) => {
-    const url = initialClient
-      ? `${process.env.NEXT_PUBLIC_API_URL}/clients/update/${initialClient.id}`
-      : `${process.env.NEXT_PUBLIC_API_URL}/clients/create`;
-    const method = initialClient ? "PUT" : "POST";
-
-    await toast.promise(
-      fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-        credentials: "include",
-      }).then(async (response) => {
-        if (!response.ok) {
-          throw new Error("Error al guardar el cliente");
-        }
-        reset();
-      }),
-      {
-        loading: initialClient
-          ? "Actualizando cliente..."
-          : "Creando cliente...",
-        success: initialClient
-          ? "Cliente actualizado con éxito"
-          : "Cliente creado con éxito",
-        error: "Hubo un error al guardar el cliente",
-      },
-    );
+  const handleFormSubmit = async (data: ClientFormValues) => {
+    await onSubmit(data);
   };
+
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(handleFormSubmit)}
       className="w-full flex flex-col items-start justify-start gap-4"
     >
       <h2 className="text-2xl font-normal mb-4">
@@ -133,12 +113,11 @@ export default function ClientForm({
         </Button>
         <Button
           variant="tertiary"
-          disabled={Object.keys(dirtyFields).length === 0}
-          onClick={() => reset()}
+          onClick={onClose}
           className="w-full disable:opacity-50 disabled:text-gray-500 disabled:cursor-not-allowed"
         >
           <DiscardIcon className="w-4 h-4 mr-2" />
-          Deshacer cambios
+          Cancelar
         </Button>
       </div>
     </form>
