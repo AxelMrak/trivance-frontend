@@ -22,9 +22,13 @@ export default function AppointmentsContainer({
 }: AppointmentsContainerProps) {
   const [appointments, setAppointments] =
     useState<Appointment[]>(initialAppointments);
-
   const [services, setServices] = useState<Service[]>(initialServices);
   const { openDialog, closeDialog } = useDialog();
+
+  const onAppointmentCreated = (newAppointment: Appointment) => {
+    setAppointments((prev) => [...prev, newAppointment]);
+    closeDialog();
+  };
 
   useEffect(() => {
     setServices(initialServices);
@@ -118,6 +122,7 @@ export default function AppointmentsContainer({
               <AppointmentForm
                 services={initialServices}
                 appointments={appointments}
+                onAppointmentCreated={onAppointmentCreated}
               />,
             )
           }
