@@ -94,9 +94,11 @@ const timeSlots = [
 export default function AppointmentForm({
   services,
   appointments,
+  onAppointmentCreated,
 }: {
   services: Service[];
   appointments: Appointment[];
+  onAppointmentCreated: (newAppointment: Appointment) => void;
 }) {
   const [currentStep, setCurrentStep] = useState(1);
   const { user } = useUser();
@@ -196,6 +198,7 @@ export default function AppointmentForm({
       }).then(async (res) => {
         if (!res.ok) throw new Error("No se pudo reservar el turno");
         const data = await res.json();
+        onAppointmentCreated(data);
         console.log("Turno reservado:", data);
       }),
       {
@@ -224,6 +227,8 @@ export default function AppointmentForm({
         if (!res.ok) throw new Error("No se pudo reservar el turno");
 
         const appointment = await res.json();
+
+        onAppointmentCreated(appointment);
 
         const paymentRes = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/appointments/payment/${appointment.id}/link`,
