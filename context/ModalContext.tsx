@@ -31,7 +31,6 @@ export const DialogProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // Bloquear scroll del body mientras el modal está abierto (opcional)
   useEffect(() => {
     if (content) {
       document.body.style.overflow = "hidden";
@@ -67,7 +66,9 @@ export const DialogProvider = ({ children }: { children: ReactNode }) => {
               <CloseIcon className="w-5 h-5" />
             </button>
 
-            <div className="p-6">{content}</div>
+            <div className="p-6  max-h-[70vh] overflow-y-scroll custom-scrollbar">
+              {content}
+            </div>
           </div>
         </div>
       )}

@@ -11,6 +11,7 @@ import { formatInterval } from "@utils/format";
 import { Service } from "@/types/Service";
 import Button from "@/components/ui/Button";
 import SaveIcon from "@/components/icons/SaveIcon";
+import DurationPicker from "@/components/ui/DurationPicker";
 import DiscardIcon from "@/components/icons/DiscardIcon";
 
 interface ServiceFormProps {
@@ -36,7 +37,10 @@ export default function ServiceForm({
       name: initialService?.name || "",
       description: initialService?.description || "",
       price: Number(initialService?.price) || 0,
-      duration: formatInterval(initialService?.duration) || "0",
+      duration:
+        typeof initialService?.duration === "string"
+          ? initialService.duration
+          : formatInterval(initialService?.duration) || "0",
     },
   });
 
@@ -93,18 +97,19 @@ export default function ServiceForm({
         )}
       />
 
-      <Controller
-        name="duration"
-        control={control}
-        render={({ field }) => (
-          <Input
-            {...field}
-            label="Duración del servicio"
-            placeholder="45 min, 1 hour, 2 weeks, etc"
-            error={errors.duration?.message}
-          />
+      <div className="w-full flex flex-col items-start gap-4">
+        <label className="block text-xl font-normal text-gray-900 ">
+          Duración del servicio
+        </label>
+        <Controller
+          name="duration"
+          control={control}
+          render={({ field }) => <DurationPicker {...field} />}
+        />
+        {errors.duration && (
+          <p className="mt-1 text-sm text-red-600">{errors.duration.message}</p>
         )}
-      />
+      </div>
 
       <div className="w-full grid grid-cols-2 items-center gap-4 ">
         <Button
