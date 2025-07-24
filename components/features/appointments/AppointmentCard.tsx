@@ -89,6 +89,13 @@ export default function AppointmentCard({
         >
           Ver detalle
         </Button>
+        <Button
+          variant="destructive"
+          className="w-full"
+          onClick={() => openDeleteDialog(appointment.id, appointment.user.name)}
+        >
+          Eliminar
+        </Button>
       </div>
     </article>
   );
