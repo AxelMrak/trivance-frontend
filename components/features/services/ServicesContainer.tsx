@@ -6,7 +6,6 @@ import toast from 'react-hot-toast';
 import Button from '@/components/ui/Button';
 import ServiceCard from '@components/features/services/ServiceCard';
 import ServiceForm from '@components/features/forms/ServiceForm';
-import ServiceDetails from '@components/features/forms/ServiceDetails';
 import DeleteDialog from '@/components/layouts/dialogs/DeleteDialog';
 import { useDialog } from '@/context/ModalContext';
 import { ServiceFormValues } from '@/lib/validation/service.schema';
@@ -142,10 +141,6 @@ export default function ServicesContainer({
     );
   };
 
-  const openViewDialog = (service: Service) => {
-    openDialog(<ServiceDetails service={service} onClose={closeDialog} />);
-  };
-
   return (
     <div className="w-full flex flex-col items-start justify-between gap-4">
       <div className="w-full flex items-center justify-between gap-4">
@@ -169,7 +164,6 @@ export default function ServicesContainer({
               service={service}
               openDeleteDialog={openDeleteDialog}
               openEditDialog={openEditDialog}
-              openViewDialog={openViewDialog}
             />
           ))
         ) : (
