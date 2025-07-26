@@ -12,20 +12,29 @@ export const MainHeader = ({ title }: { title?: string }) => {
 
 
   useEffect(() => {
-    const now = new Date();
-    setTime(
-      now.toLocaleTimeString("es-AR", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-      })
-    );
-    setDate(
-      now.toLocaleDateString("es-AR", {
-        day: "2-digit",
-        month: "2-digit",
-      })
-    );
+    const updateDateTime = () => {
+      const now = new Date();
+      setTime(
+        now.toLocaleTimeString("es-AR", {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        })
+      );
+      setDate(
+        now.toLocaleDateString("es-AR", {
+          day: "2-digit",
+          month: "2-digit",
+        })
+      );
+    };
+
+    updateDateTime();
+    const timer = setInterval(updateDateTime, 1000); 
+
+    return () => {
+      clearInterval(timer);
+    };
   }, []);
 
   return (
