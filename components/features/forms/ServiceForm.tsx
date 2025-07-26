@@ -90,7 +90,11 @@ export default function ServiceForm({
             {...field}
             label="Precio del servicio"
             placeholder="Precio del servicio"
-            onChange={(event) => field.onChange(+event.target.value)}
+            onChange={(event) =>
+              field.onChange(
+                event.target.value === "" ? "" : +event.target.value,
+              )
+            }
             type="number"
             error={errors.price?.message}
           />
@@ -119,7 +123,7 @@ export default function ServiceForm({
           className="w-full"
         >
           <SaveIcon className="w-4 h-4 mr-2" />
-          {initialService ? "Actualizar servicio" : "Crear servicio"}
+          {initialService ? "Guardar cambios" : "Crear servicio"}
         </Button>
         <Button
           variant="tertiary"
