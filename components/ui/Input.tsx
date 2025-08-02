@@ -42,12 +42,23 @@ export default function Input({
   required = false,
   touched = false,
   className = "",
-  rows = 4,
+  rows = 2,
 }: InputProps) {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === "password";
   const isTextarea = type === "textarea";
   const inputType = isPassword && showPassword ? "text" : type;
+
+  const handleTextareaChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>,
+  ) => {
+    if (onChange) {
+      onChange(e);
+    }
+    const textarea = e.target;
+    textarea.style.height = "auto";
+    textarea.style.height = `${textarea.scrollHeight}px`;
+  };
 
   const sharedClassNames = `w-full px-3 py-2 border ${error ? "border-red-500" : "border-gray-300"
     } rounded-md focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-transparent ${disabled ? "bg-gray-200 cursor-not-allowed" : "bg-gray-50"
@@ -65,13 +76,13 @@ export default function Input({
             id={name}
             name={name}
             value={value}
-            onChange={onChange}
+            onChange={handleTextareaChange}
             onBlur={onBlur}
             disabled={disabled}
             placeholder={placeholder}
             rows={rows}
             maxLength={maxTextareaLength}
-            className={sharedClassNames + " resize-none h-56 !text-sm"}
+            className={sharedClassNames + " resize-none !text-sm"}
           />
         ) : (
           <>

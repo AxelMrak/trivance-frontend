@@ -3,7 +3,7 @@ import React from "react";
 
 type ButtonProps = {
   children: React.ReactNode;
-  variant?: "primary" | "secondary" | "tertiary";
+  variant?: "primary" | "secondary" | "tertiary" | "destructive";
   type?: "button" | "submit" | "reset";
   onClick?: () => void;
   disabled?: boolean;
@@ -30,6 +30,8 @@ const Button: React.FC<ButtonProps> = ({
       "bg-secondary-900 text-white hover:bg-transparent hover:text-secondary-900 hover:border-secondary-900",
     tertiary:
       "bg-white text-primary-base border border-primary-base hover:border-primary-600 hover:text-primary-600 hover:bg-transparent",
+    destructive:
+      "bg-transparent text-red-500 border border-red-500 hover:bg-red-500 hover:text-white",
   };
 
   const disabledStyles = "opacity-50 !cursor-not-allowed";

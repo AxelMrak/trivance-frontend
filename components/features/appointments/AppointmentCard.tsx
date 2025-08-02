@@ -13,12 +13,10 @@ const AppointmentDate = dynamic(() => import("./AppointmentDate"), {
 });
 export default function AppointmentCard({
   appointment,
-  openDeleteDialog,
   openEditDialog,
   openAddToCalendarDialog,
 }: {
   appointment: Appointment;
-  openDeleteDialog?: (id: string, name?: string | null) => void;
   openEditDialog?: (appointment: Appointment) => void;
   openAddToCalendarDialog?: (appointment: Appointment) => void;
 }) {
@@ -26,7 +24,7 @@ export default function AppointmentCard({
     new Date(appointment.start_date).toDateString() ===
     new Date().toDateString();
   return (
-    <article className="w-full flex flex-col gap-4 p-4 bg-white border border-gray-300 rounded-md">
+    <article className="w-full flex flex-col gap-2 p-4 bg-white border border-gray-300 rounded-md">
       <div className="w-full flex flex-row items-start justify-between gap-4">
         <RoleGuard minRole={UserRole.ADMIN}>
           <h2 className="text-xl font-semibold text-gray-800">
@@ -55,9 +53,10 @@ export default function AppointmentCard({
           )}
         </div>
       </div>
-      <div className="w-full flex flex-col items-start justify-start gap-2">
-        <AppointmentDate date={appointment.start_date} />
-
+      <div className="w-full flex flex-col items-start justify-start gap-1">
+        <p className="text-lg font-medium">
+          <AppointmentDate date={appointment.start_date} />
+        </p>
         <p className="text-gray-600 text-lg font-medium">
           {appointment.service?.name || "Servicio no disponible"}
         </p>
@@ -65,7 +64,7 @@ export default function AppointmentCard({
           {appointment.description || "Sin descripción"}
         </p>
       </div>
-      <div className="w-full grid grid-cols-1  md:grid-cols-3 gap-2 text-xs">
+      <div className="w-full grid grid-cols-1  md:grid-cols-3 gap-2 text-base">
         <RoleGuard minRole={UserRole.ADMIN}>
           <Button
             variant="secondary"
@@ -88,13 +87,6 @@ export default function AppointmentCard({
           onClick={() => openEditDialog(appointment)}
         >
           Ver detalle
-        </Button>
-        <Button
-          variant="destructive"
-          className="w-full"
-          onClick={() => openDeleteDialog(appointment.id, appointment.user.name)}
-        >
-          Eliminar
         </Button>
       </div>
     </article>

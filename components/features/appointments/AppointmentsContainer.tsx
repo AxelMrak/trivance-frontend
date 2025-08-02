@@ -1,7 +1,6 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useDialog } from "@/context/ModalContext";
-import DeleteDialog from "@/components/layouts/dialogs/DeleteDialog";
 import toast from "react-hot-toast";
 import Button from "@/components/ui/Button";
 import AppointmentCard from "@/components/features/appointments/AppointmentCard";
@@ -10,6 +9,8 @@ import { generateCalendarLinks } from "@/utils/functions";
 import Link from "next/link";
 import { Service } from "@/types/Service";
 import AppointmentForm from "@/components/features/forms/AppointmentForm";
+import AppointmentDetailsForm from "@/components/features/forms/AppointmentDetailsForm";
+import { useUser } from "@/context/UserContext";
 
 interface AppointmentsContainerProps {
   initialAppointments: Appointment[];
@@ -22,19 +23,36 @@ export default function AppointmentsContainer({
 }: AppointmentsContainerProps) {
   const [appointments, setAppointments] =
     useState<Appointment[]>(initialAppointments);
-  const [services, setServices] = useState<Service[]>(initialServices);
   const { openDialog, closeDialog } = useDialog();
+  const { user } = useUser();
 
   const onAppointmentCreated = (newAppointment: Appointment) => {
-    setAppointments((prev) => [...prev, newAppointment]);
+    const service = initialServices.find(
+      (s) => s.id === newAppointment.service_id,
+    );
+
+    const fullAppointment = {
+      ...newAppointment,
+      user: user?.user,
+      service,
+    };
+
+    setAppointments((prev) => [...prev, fullAppointment]);
     closeDialog();
   };
 
-  useEffect(() => {
-    setServices(initialServices);
-  }, [initialServices]);
+  const onAppointmentUpdated = (updatedAppointment: Appointment) => {
+    setAppointments((prev) =>
+      prev.map((apt) =>
+        apt.id === updatedAppointment.id
+          ? { ...apt, ...updatedAppointment }
+          : apt,
+      ),
+    );
+    closeDialog();
+  };
 
-  const handleDeleteClient = async (id: string): Promise<void> => {
+  const handleDeleteAppointment = async (id: string): Promise<void> => {
     const deletePromise = fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/appointments/delete/${id}`,
       {
@@ -65,20 +83,19 @@ export default function AppointmentsContainer({
     });
   };
 
-  const openDeleteDialog = (id: string, name?: string | null) => {
+  const openEditDialog = (appointment: Appointment) => {
     openDialog(
-      <DeleteDialog
-        data={{ id, title: name || null }}
+      <AppointmentDetailsForm
+        initialAppointment={appointment}
+        services={initialServices}
+        onAppointmentUpdated={onAppointmentUpdated}
+        onDelete={handleDeleteAppointment}
         onClose={closeDialog}
-        onDelete={() => handleDeleteClient(id)}
       />,
     );
   };
 
-  const openEditDialog = (appointment: Appointment) => {};
-
   const openAddToCalendarDialog = (appointment: Appointment) => {
-    // TODO: FIX END DATE CALC. IT ASSUMES THAT WE USE A 30 MINUTE DURATION WHEN THE SERVICE DURATIONS IS A INTERVAL OBJECT OF SQL AND COULD BE ANYTHING
     const links = generateCalendarLinks({
       title: `Turno con ${appointment.user?.name}`,
       description: appointment.description || "Sin descripción",
@@ -107,7 +124,6 @@ export default function AppointmentsContainer({
     );
   };
 
-  console.log(initialServices);
   return (
     <div className="w-full flex flex-col items-start justify-between gap-4">
       <div className="w-full flex items-center justify-between gap-4">
@@ -137,7 +153,6 @@ export default function AppointmentsContainer({
             <AppointmentCard
               key={appointment.id}
               appointment={appointment}
-              openDeleteDialog={openDeleteDialog}
               openEditDialog={openEditDialog}
               openAddToCalendarDialog={openAddToCalendarDialog}
             />
