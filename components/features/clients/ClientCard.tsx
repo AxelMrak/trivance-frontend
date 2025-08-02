@@ -55,7 +55,7 @@ export default function ClientCard({
         >
           <Button
             variant="tertiary"
-            className="w-full !text-md font-normal !text-[#25d366] border !border-[#25d366] flex items-center justify-center gap-2"
+            className="w-full text-base font-normal !text-[#25d366] border !border-[#25d366] flex items-center justify-center gap-2"
           >
             <WhatsAppIcon className="w-5 h-5" />
             Mensaje
@@ -65,7 +65,7 @@ export default function ClientCard({
         <a href={`tel:${client.phone}`} className="w-full">
           <Button
             variant="tertiary"
-            className="w-full !text-md font-normal !text-blue-600 border !border-blue-600 flex items-center justify-center gap-2"
+            className="w-full text-base font-normal !text-blue-600 border !border-blue-600 flex items-center justify-center gap-2"
           >
             <PhoneIcon className="w-5 h-5" />
             Llamar
@@ -74,7 +74,7 @@ export default function ClientCard({
 
         <Button
           variant="primary"
-          className="w-full !text-md font-semibold"
+          className="w-full text-base font-semibold"
           onClick={() => openEditDialog(client)}
         >
           Ver detalle

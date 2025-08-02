@@ -36,7 +36,7 @@ export default function ServiceCard({
       <div className="w-full grid grid-cols-2 gap-2">
         <Button
           variant="primary"
-          className="w-full md:w-auto !text-md font-semibold flex items-center justify-center gap-2"
+          className="w-full md:w-auto text-base font-semibold flex items-center justify-center gap-2"
           onClick={() => openEditDialog(service)}
         >
           Ver detalles
@@ -45,7 +45,7 @@ export default function ServiceCard({
         <Button
           variant="tertiary"
           className="w-full md:w-auto
-                    !text-md font-normal text-red-500 border !border-red-500 hover:bg-red-100 flex items-center justify-center gap-2"
+                    text-base font-normal text-red-500 border !border-red-500 hover:bg-red-100 flex items-center justify-center gap-2"
           onClick={() => openDeleteDialog(service.id, service.name || null)}
         >
           <TrashIcon className="w-5 h-5 " />
