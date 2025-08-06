@@ -82,7 +82,7 @@ export default function Input({
             placeholder={placeholder}
             rows={rows}
             maxLength={maxTextareaLength}
-            className={sharedClassNames + " resize-none !text-sm"}
+            className={sharedClassNames + " resize-none text-base"}
           />
         ) : (
           <>

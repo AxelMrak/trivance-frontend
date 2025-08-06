@@ -42,10 +42,14 @@ export default function AppointmentsContainer({
   };
 
   const onAppointmentUpdated = (updatedAppointment: Appointment) => {
+    const service = initialServices.find(
+      (s) => s.id === updatedAppointment.service_id,
+    );
+
     setAppointments((prev) =>
       prev.map((apt) =>
         apt.id === updatedAppointment.id
-          ? { ...apt, ...updatedAppointment }
+          ? { ...apt, ...updatedAppointment, service }
           : apt,
       ),
     );
