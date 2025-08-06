@@ -9,6 +9,8 @@ import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
+import SaveIcon from "@/components/icons/SaveIcon";
+import TrashIcon from "@/components/icons/TrashIcon";
 
 const appointmentDetailsSchema = z.object({
   service_id: z.string().min(1, "El servicio es requerido"),
@@ -91,9 +93,9 @@ export default function AppointmentDetailsForm({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="w-full flex flex-col items-start justify-start gap-4 p-4"
+      className="w-full flex flex-col items-start justify-start gap-4"
     >
-      <h2 className="text-2xl font-semibold mb-4">
+      <h2 className="text-2xl font-normal mb-4">
         Detalles del Turno de {initialAppointment.user?.name}
       </h2>
 
@@ -124,7 +126,7 @@ export default function AppointmentDetailsForm({
             <select
               {...field}
               id="service_id"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-transparent bg-gray-50"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-transparent bg-gray-50 select-font-size"
             >
               {services.map((service) => (
                 <option key={service.id} value={service.id}>
@@ -182,7 +184,7 @@ export default function AppointmentDetailsForm({
             <select
               {...field}
               id="status"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-transparent bg-gray-50"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-transparent bg-gray-50 select-font-size"
             >
               <option value="pending">Pendiente</option>
               <option value="confirmed">Confirmado</option>
@@ -197,22 +199,15 @@ export default function AppointmentDetailsForm({
         )}
       />
 
-      <div className="w-full grid grid-cols-3 items-center gap-4 mt-4">
+      <div className="w-full grid grid-cols-2 items-center gap-4">
         <Button
           variant="destructive"
           onClick={() => onDelete(initialAppointment.id)}
           type="button"
           className="w-full"
         >
+          <TrashIcon className="w-4 h-4 mr-2" />
           Eliminar
-        </Button>
-        <Button
-          variant="tertiary"
-          onClick={onClose}
-          type="button"
-          className="w-full"
-        >
-          Cancelar
         </Button>
         <Button
           variant="primary"
@@ -220,6 +215,7 @@ export default function AppointmentDetailsForm({
           disabled={isSubmitting}
           className="w-full"
         >
+          <SaveIcon className="w-4 h-4 mr-2" />
           Guardar Cambios
         </Button>
       </div>
