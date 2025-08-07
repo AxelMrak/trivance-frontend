@@ -135,7 +135,7 @@ export default function ClientForm({
           variant="tertiary"
           disabled={Object.keys(dirtyFields).length === 0}
           onClick={() => reset()}
-          className="w-full disable:opacity-50 disabled:text-gray-500 disabled:cursor-not-allowed"
+          className="w-full disable:opacity-50 disabled:text-gray-500 disabled:cursor-not-allowed whitespace-nowrap"
         >
           <DiscardIcon className="w-4 h-4 mr-2" />
           Deshacer cambios
