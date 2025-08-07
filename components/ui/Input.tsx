@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -9,24 +8,24 @@ import { ErrorIcon } from "@components/icons/ErrorIcon";
 const maxTextareaLength = 1500;
 
 type InputProps = {
-	label: string;
-	name: string;
-	type?: 'text' | 'password' | 'email' | 'number' | 'textarea';
-	value?: string;
-	onChange?: (
-		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-	) => void;
-	onBlur?: (
-		e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
-	) => void;
-	error?: string;
-	disabled?: boolean;
-	placeholder?: string;
-	required?: boolean;
-	touched?: boolean;
-	className?: string;
-	rows?: number;
-	readOnly?: boolean;
+  label: string;
+  name: string;
+  type?: "text" | "password" | "email" | "number" | "textarea";
+  value?: string;
+  onChange?: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void;
+  onBlur?: (
+    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void;
+  error?: string;
+  disabled?: boolean;
+  placeholder?: string;
+  required?: boolean;
+  touched?: boolean;
+  className?: string;
+  rows?: number;
+  readOnly?: boolean;
 };
 
 export default function Input({
@@ -42,30 +41,29 @@ export default function Input({
   required = false,
   touched = false,
   className = "",
-  rows = 2,
+  rows = 5,
 }: InputProps) {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === "password";
   const isTextarea = type === "textarea";
   const inputType = isPassword && showPassword ? "text" : type;
 
-  const handleTextareaChange = (
-    e: React.ChangeEvent<HTMLTextAreaElement>,
-  ) => {
+  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (onChange) {
       onChange(e);
     }
-    const textarea = e.target;
-    textarea.style.height = "auto";
-    textarea.style.height = `${textarea.scrollHeight}px`;
   };
 
-  const sharedClassNames = `w-full px-3 py-2 border ${error ? "border-red-500" : "border-gray-300"
-    } rounded-md focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-transparent ${disabled ? "bg-gray-200 cursor-not-allowed" : "bg-gray-50"
-    }`;
+  const sharedClassNames = `w-full px-3 py-2 border ${
+    error ? "border-red-500" : "border-gray-300"
+  } rounded-md focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-transparent ${
+    disabled ? "bg-gray-200 cursor-not-allowed" : "bg-gray-50"
+  }`;
 
   return (
-    <div className={`w-full flex flex-col items-start gap-3 text-xl ${className}`}>
+    <div
+      className={`w-full flex flex-col items-start gap-3 text-xl ${className}`}
+    >
       <label htmlFor={name} className="block !font-normal text-gray-900">
         {label} {required && touched && <span className="text-red-500">*</span>}
       </label>
@@ -82,7 +80,9 @@ export default function Input({
             placeholder={placeholder}
             rows={rows}
             maxLength={maxTextareaLength}
-            className={sharedClassNames + " resize-none text-base"}
+            className={
+              sharedClassNames + " resize-none text-base !h-48 overflow-y-auto"
+            }
           />
         ) : (
           <>
@@ -113,18 +113,18 @@ export default function Input({
             )}
           </>
         )}
-
       </div>
-      {
-        isTextarea && (
-          <span className={`text-sm ${value.length > maxTextareaLength ? "text-red-500" : "text-gray-400"}`}>
-            {value.length}/{maxTextareaLength} caracteres
-          </span>
-        )
-      }
+      {isTextarea && (
+        <span
+          className={`text-sm ${value.length > maxTextareaLength ? "text-red-500" : "text-gray-400"}`}
+        >
+          {value.length}/{maxTextareaLength} caracteres
+        </span>
+      )}
       <span
-        className={`text-sm font-normal flex items-center gap-1 transition-opacity duration-300 ${error ? "text-red-500" : "text-gray-400"
-          } ${error || required ? "opacity-100" : "opacity-0"}`}
+        className={`text-sm font-normal flex items-center gap-1 transition-opacity duration-300 ${
+          error ? "text-red-500" : "text-gray-400"
+        } ${error || required ? "opacity-100" : "opacity-0"}`}
       >
         {error ? (
           <>
@@ -138,4 +138,3 @@ export default function Input({
     </div>
   );
 }
-

@@ -2,7 +2,6 @@ import { Service } from "@/types/Service";
 import Button from "@/components/ui/Button";
 import { formatInterval, formatPrice } from "@/utils/format";
 import ClockIcon from "@/components/icons/ClockIcon";
-import EditIcon from "@/components/icons/EditIcon";
 import TrashIcon from "@/components/icons/TrashIcon";
 
 export default function ServiceCard({
@@ -37,7 +36,7 @@ export default function ServiceCard({
         <Button
           variant="tertiary"
           className="w-full md:w-auto
-                    text-base font-normal text-red-500 border !border-red-500 hover:bg-red-100 flex items-center justify-center gap-2"
+                    text-base font-normal text-red-500 border !border-red-500  flex items-center justify-center gap-2 hover:!bg-red-500 hover:text-white transition-colors duration-200"
           onClick={() => openDeleteDialog(service.id, service.name || null)}
         >
           <TrashIcon className="w-5 h-5 " />
