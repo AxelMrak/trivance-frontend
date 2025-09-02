@@ -9,6 +9,8 @@ import ServiceForm from '@components/features/forms/ServiceForm';
 import DeleteDialog from '@/components/layouts/dialogs/DeleteDialog';
 import { useDialog } from '@/context/ModalContext';
 import { ServiceFormValues } from '@/lib/validation/service.schema';
+import SearchInput from '@/components/ui/SearchInput';
+import { set } from 'zod';
 
 interface ServicesContainerProps {
   initialServices: Service[];
@@ -18,7 +20,12 @@ export default function ServicesContainer({
   initialServices,
 }: ServicesContainerProps) {
   const [services, setServices] = useState<Service[]>(initialServices);
+  const [query, setQuery] = useState<string>('');
   const { openDialog, closeDialog } = useDialog();
+
+  const filteredServices = services.filter((service) =>
+    service.name.toLowerCase().includes(query.toLowerCase())
+  );
 
   const handleCreateService = async (data: ServiceFormValues) => {
     const createPromise = fetch(
@@ -141,24 +148,28 @@ export default function ServicesContainer({
     );
   };
 
+  const handleSearch = (query: string) => {
+    setQuery(query);
+  };
+
   return (
     <div className="w-full flex flex-col items-start justify-between gap-4">
       <div className="w-full flex items-center justify-between gap-4">
-        <span className="text-2xl font-normal text-gray-500">
-          {services.length} servicios encontrados
-        </span>
+        <SearchInput placeholder="Buscar servicio" className="w-full text-xl" onChange={(e) => handleSearch(e.target.value)} />
         <Button
           onClick={openCreateDialog}
           variant="primary"
-          className="w-full md:w-auto !text-2xl font-normal"
+          className="w-full md:w-auto !text-lg font-normal whitespace-nowrap"
         >
           Crear servicio +
         </Button>
       </div>
-
+  <span className="text-2xl font-normal text-gray-500">
+          {services?.length || 0} servicios encontrados
+        </span>
       <section className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
-        {services.length > 0 ? (
-          services.map((service) => (
+        {filteredServices.length > 0 ? (
+          filteredServices.map((service) => (
             <ServiceCard
               key={service.id}
               service={service}

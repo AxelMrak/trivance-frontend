@@ -24,7 +24,6 @@ export default async function Services() {
 
   return (
     <div className="w-full min-h-[85svh] flex flex-col items-start justify-start gap-4 p-4 text-center bg-white">
-      <SearchInput placeholder="Buscar servicio" className="w-full text-2xl" />
       <Suspense fallback={<ServicesContainerSkeleton />}>
         <ServicesContainer initialServices={services} />
       </Suspense>
