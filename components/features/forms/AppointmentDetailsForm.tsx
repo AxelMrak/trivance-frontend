@@ -45,9 +45,7 @@ export default function AppointmentDetailsForm({
     resolver: zodResolver(appointmentDetailsSchema),
     defaultValues: {
       service_id: initialAppointment.service?.id || "",
-      start_date: new Date(initialAppointment.start_date)
-        .toISOString()
-        .slice(0, 16),
+      start_date: new Date(new Date(initialAppointment.start_date).getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16),
       description: initialAppointment.description || "",
       status: initialAppointment.status,
     },
@@ -56,9 +54,7 @@ export default function AppointmentDetailsForm({
   useEffect(() => {
     reset({
       service_id: initialAppointment.service?.id || "",
-      start_date: new Date(initialAppointment.start_date)
-        .toISOString()
-        .slice(0, 16),
+      start_date: new Date(new Date(initialAppointment.start_date).getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16),
       description: initialAppointment.description || "",
       status: initialAppointment.status,
     });
@@ -70,7 +66,10 @@ export default function AppointmentDetailsForm({
       {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          ...data,
+          start_date: new Date(data.start_date).toISOString(),
+        }),
         credentials: "include",
       },
     ).then(async (response) => {

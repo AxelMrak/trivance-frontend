@@ -75,7 +75,7 @@ interface FormData {
   service_id: string;
   date: string;
   time: string;
-  start_date?: string; // Optional, used for API request
+  start_date?: string; 
   description: string;
   status: "pending" | "confirmed" | "cancelled";
 }
@@ -107,7 +107,7 @@ export default function AppointmentForm({
     service_id: "",
     date: "",
     time: "",
-    start_date: "", // This will be set based on date and time
+    start_date: "", 
     description: "",
     status: "pending",
   });
@@ -194,7 +194,10 @@ export default function AppointmentForm({
           "Content-Type": "application/json",
         },
         credentials: "include",
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          start_date: new Date(`${formData.date}T${formData.time}:00`).toISOString(),
+        }),
       }).then(async (res) => {
         if (!res.ok) throw new Error("No se pudo reservar el turno");
         const data = await res.json();
@@ -220,7 +223,10 @@ export default function AppointmentForm({
               "Content-Type": "application/json",
             },
             credentials: "include",
-            body: JSON.stringify(formData),
+            body: JSON.stringify({
+              ...formData,
+              start_date: new Date(`${formData.date}T${formData.time}:00`).toISOString(),
+            }),
           },
         );
 
