@@ -19,6 +19,8 @@ import toast from "react-hot-toast";
 import { ErrorIcon } from "@/components/icons/ErrorIcon";
 import MPLogo from "@/components/icons/MPLogo";
 import AppointmentIcon from "@/components/icons/AppointmentIcon";
+import { FormData, timeSlots } from "@/utils/appointment";
+
 
 const Card = ({
   children,
@@ -70,26 +72,6 @@ const CardContent = ({
   className?: string;
 }) => <div className={`${className}`}>{children}</div>;
 
-interface FormData {
-  user_id: string;
-  service_id: string;
-  date: string;
-  time: string;
-  start_date?: string; 
-  description: string;
-  status: "pending" | "confirmed" | "cancelled";
-}
-
-const timeSlots = [
-  "09:00",
-  "10:00",
-  "11:00",
-  "12:00",
-  "14:00",
-  "15:00",
-  "16:00",
-  "17:00",
-];
 
 export default function AppointmentForm({
   services,
