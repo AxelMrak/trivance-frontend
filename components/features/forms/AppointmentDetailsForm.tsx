@@ -14,7 +14,13 @@ import TrashIcon from "@/components/icons/TrashIcon";
 
 const appointmentDetailsSchema = z.object({
   service_id: z.string().min(1, "El servicio es requerido"),
-  start_date: z.string().min(1, "La fecha es requerida"),
+  start_date: z.string().min(1, "La fecha es requerida").refine((value) => {
+    const date = new Date(value);
+    const hours = date.getHours();
+    return hours >= 9 && hours <= 17;
+  }, {
+    message: "La hora debe estar entre 09:00 y 17:00",
+  }),
   description: z.string().optional(),
   status: z.enum(["pending", "confirmed", "cancelled"]),
 });
@@ -45,9 +51,7 @@ export default function AppointmentDetailsForm({
     resolver: zodResolver(appointmentDetailsSchema),
     defaultValues: {
       service_id: initialAppointment.service?.id || "",
-      start_date: new Date(initialAppointment.start_date)
-        .toISOString()
-        .slice(0, 16),
+      start_date: new Date(new Date(initialAppointment.start_date).getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16),
       description: initialAppointment.description || "",
       status: initialAppointment.status,
     },
@@ -56,9 +60,7 @@ export default function AppointmentDetailsForm({
   useEffect(() => {
     reset({
       service_id: initialAppointment.service?.id || "",
-      start_date: new Date(initialAppointment.start_date)
-        .toISOString()
-        .slice(0, 16),
+      start_date: new Date(new Date(initialAppointment.start_date).getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16),
       description: initialAppointment.description || "",
       status: initialAppointment.status,
     });
@@ -70,7 +72,10 @@ export default function AppointmentDetailsForm({
       {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          ...data,
+          start_date: new Date(data.start_date).toISOString(),
+        }),
         credentials: "include",
       },
     ).then(async (response) => {

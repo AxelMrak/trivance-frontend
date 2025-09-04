@@ -19,6 +19,8 @@ import toast from "react-hot-toast";
 import { ErrorIcon } from "@/components/icons/ErrorIcon";
 import MPLogo from "@/components/icons/MPLogo";
 import AppointmentIcon from "@/components/icons/AppointmentIcon";
+import { FormData, timeSlots } from "@/utils/appointment";
+
 
 const Card = ({
   children,
@@ -70,26 +72,6 @@ const CardContent = ({
   className?: string;
 }) => <div className={`${className}`}>{children}</div>;
 
-interface FormData {
-  user_id: string;
-  service_id: string;
-  date: string;
-  time: string;
-  start_date?: string; // Optional, used for API request
-  description: string;
-  status: "pending" | "confirmed" | "cancelled";
-}
-
-const timeSlots = [
-  "09:00",
-  "10:00",
-  "11:00",
-  "12:00",
-  "14:00",
-  "15:00",
-  "16:00",
-  "17:00",
-];
 
 export default function AppointmentForm({
   services,
@@ -107,7 +89,7 @@ export default function AppointmentForm({
     service_id: "",
     date: "",
     time: "",
-    start_date: "", // This will be set based on date and time
+    start_date: "", 
     description: "",
     status: "pending",
   });
@@ -194,7 +176,10 @@ export default function AppointmentForm({
           "Content-Type": "application/json",
         },
         credentials: "include",
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          start_date: new Date(`${formData.date}T${formData.time}:00`).toISOString(),
+        }),
       }).then(async (res) => {
         if (!res.ok) throw new Error("No se pudo reservar el turno");
         const data = await res.json();
@@ -220,7 +205,10 @@ export default function AppointmentForm({
               "Content-Type": "application/json",
             },
             credentials: "include",
-            body: JSON.stringify(formData),
+            body: JSON.stringify({
+              ...formData,
+              start_date: new Date(`${formData.date}T${formData.time}:00`).toISOString(),
+            }),
           },
         );
 
