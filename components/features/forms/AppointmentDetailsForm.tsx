@@ -14,7 +14,13 @@ import TrashIcon from "@/components/icons/TrashIcon";
 
 const appointmentDetailsSchema = z.object({
   service_id: z.string().min(1, "El servicio es requerido"),
-  start_date: z.string().min(1, "La fecha es requerida"),
+  start_date: z.string().min(1, "La fecha es requerida").refine((value) => {
+    const date = new Date(value);
+    const hours = date.getHours();
+    return hours >= 9 && hours <= 17;
+  }, {
+    message: "La hora debe estar entre 09:00 y 17:00",
+  }),
   description: z.string().optional(),
   status: z.enum(["pending", "confirmed", "cancelled"]),
 });
