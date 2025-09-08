@@ -3,7 +3,10 @@ import { MainHeader } from "@/components/layouts/dashboard/MainHeader";
 import { fetchWithToken } from "@/lib/api/fetchWithToken";
 
 export default async function Dashboard() {
-  const res = await fetchWithToken("/appointments/getAll", "GET");
+  const res = await fetchWithToken(
+    "/appointments/getAll?include=service",
+    "GET",
+  );
   const appointments = await res.json();
 
   return (
