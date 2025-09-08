@@ -1,9 +1,11 @@
 import { AppleLogo } from "@/components/icons/AppleLogo";
 import { GoogleCalendarLogo } from "@/components/icons/GoogleCalendarLogo";
 import { OutlookLogo } from "@/components/icons/OutlookLogo";
+import { UserRole } from "@/types/User";
 import type { Appointment } from "@types/Appointment";
 import type { CalendarDay } from "@types/Calendar";
 import { isSameDay } from "@utils/boolean";
+import { ROLE_LABELS } from "@/utils/const";
 
 export const getAppointmentsForDate = (
   appointments: Appointment[],
@@ -144,3 +146,7 @@ END:VCALENDAR`.trim();
 
   return `data:text/calendar;charset=utf8,${encodeURIComponent(icsContent)}`;
 }
+
+export const getRoleLabel = (role: number): string => {
+  return ROLE_LABELS[role as UserRole] ?? "Desconocido";
+};
