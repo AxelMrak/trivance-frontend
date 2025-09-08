@@ -45,7 +45,13 @@ export default function ClientForm({
         credentials: "include",
       }).then(async (response) => {
         if (!response.ok) {
-          throw new Error("Error al guardar el cliente");
+          try {
+            const json = await response.json();
+            throw new Error(json?.message || "Error al guardar el cliente");
+          } catch {
+            const text = await response.text();
+            throw new Error(text || "Error al guardar el cliente");
+          }
         }
         reset();
       }),
@@ -56,7 +62,7 @@ export default function ClientForm({
         success: initialClient
           ? "Cliente actualizado con éxito"
           : "Cliente creado con éxito",
-        error: "Hubo un error al guardar el cliente",
+        error: (e) => (e as Error).message || "Hubo un error al guardar el cliente",
       },
     );
   };
