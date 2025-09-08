@@ -22,7 +22,6 @@ export default async function Appointments({
 
     return (
       <div className="w-full min-h-[85svh] flex flex-col items-start justify-start gap-4 p-4 text-center bg-white">
-        <SearchInput placeholder="Buscar turnos" className="w-full text-2xl" />
         <Suspense fallback={<ClientContainerSkeleton />}>
           <AppointmentsContainer
             initialAppointments={

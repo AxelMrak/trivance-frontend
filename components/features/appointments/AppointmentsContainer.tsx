@@ -18,6 +18,7 @@ import AppointmentForm from "@/components/features/forms/AppointmentForm";
 import { useUser } from "@/context/UserContext";
 import Pagination from "@/components/ui/Pagination";
 import { useRouter } from "next/navigation";
+import SearchInput from "@/components/ui/SearchInput";
 
 interface AppointmentsContainerProps {
   initialAppointments: Appointment[];
@@ -34,6 +35,7 @@ export default function AppointmentsContainer({
   const router = useRouter();
   const openedIdRef = useRef<string | null>(null);
   const [page, setPage] = useState<number>(1);
+  const [query, setQuery] = useState<string>("");
   const pageSize = 8;
   const onAppointmentCreated = useCallback(async () => {
     try {
@@ -96,15 +98,30 @@ export default function AppointmentsContainer({
     );
   };
 
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value.toLowerCase();
+    setQuery(query);
+    const filtered = initialAppointments.filter((appointment) => {
+      const clientName = appointment.client?.user?.name
+        ?.toLowerCase()
+        .includes(query);
+      const serviceName = appointment.service?.name
+        ?.toLowerCase()
+        .includes(query);
+      const userName = appointment.user?.name?.toLowerCase().includes(query);
+      return clientName || serviceName || userName;
+    });
+    setAppointments(filtered);
+    setPage(1);
+  };
+
   return (
     <div className="w-full flex flex-col items-start justify-between gap-4">
       <div className="w-full flex items-center justify-between gap-4">
-        <span className="text-2xl font-normal text-gray-500">
-          {appointments.length} turnos encontrados
-        </span>
+        <SearchInput value={query} onChange={handleSearch} />
         <Button
           variant="primary"
-          className="w-full md:w-auto !text-2xl font-normal"
+          className="w-full md:w-auto !text-md font-normal whitespace-nowrap h-full"
           onClick={() => onAppointmentCreated()}
         >
           Crear turno +

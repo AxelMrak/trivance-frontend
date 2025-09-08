@@ -220,16 +220,10 @@ export default function AppointmentForm({
         credentials: "include",
         body: JSON.stringify(payload),
       }).then(async (res) => {
-        if (!res.ok) {
-          try {
-            const j = await res.json();
-            throw new Error(j?.message || "No se pudo reservar el turno");
-          } catch {
-            const t = await res.text();
-            throw new Error(t || "No se pudo reservar el turno");
-          }
-        }
         const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data?.message || "No se pudo reservar el turno");
+        }
         setReservedAppt(data);
         const requiresDeposit = Boolean(data?.service?.requires_deposit);
         setAwaitingPayment(requiresDeposit);
@@ -273,18 +267,12 @@ export default function AppointmentForm({
             body: JSON.stringify(payload),
           },
         );
-        if (!res.ok) {
-          try {
-            const j = await res.json();
-            throw new Error(j?.message || "No se pudo reservar el turno");
-          } catch {
-            const t = await res.text();
-            throw new Error(t || "No se pudo reservar el turno");
-          }
-        }
-
         const appointment = await res.json();
-
+        if (!res.ok) {
+          throw new Error(
+            appointment?.message || "No se pudo reservar el turno",
+          );
+        }
         setReservedAppt(appointment);
         setAwaitingPayment(true);
 
@@ -300,13 +288,7 @@ export default function AppointmentForm({
         );
 
         if (!paymentRes.ok) {
-          try {
-            const j = await paymentRes.json();
-            throw new Error(j?.message || "No se pudo generar el link de pago");
-          } catch {
-            const t = await paymentRes.text();
-            throw new Error(t || "No se pudo generar el link de pago");
-          }
+          throw new Error("No se pudo iniciar el proceso de pago");
         }
 
         const payment = await paymentRes.json();
