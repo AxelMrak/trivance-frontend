@@ -22,7 +22,7 @@ import MPLogo from "@/components/icons/MPLogo";
 import { FormData, timeSlots } from "@/utils/appointment";
 import { useEffect } from "react";
 import { MONTHS } from "@/utils/const";
-
+import { useRouter } from "next/navigation";
 
 const Card = ({
   children,
@@ -74,7 +74,6 @@ const CardContent = ({
   className?: string;
 }) => <div className={`${className}`}>{children}</div>;
 
-
 export default function AppointmentForm({
   services,
   appointments,
@@ -82,20 +81,23 @@ export default function AppointmentForm({
 }: {
   services: Service[];
   appointments: Appointment[];
-  onAppointmentCreated: (newAppointment: Appointment) => void;
+  onAppointmentCreated: () => void;
 }) {
   const [currentStep, setCurrentStep] = useState(1);
   const { user } = useUser();
+  const router = useRouter();
   const [formData, setFormData] = useState<FormData>({
     user_id: user?.user?.id || "",
     service_id: "",
     date: "",
     time: "",
-    start_date: "", 
+    start_date: "",
     description: "",
     status: "pending",
   });
-  const [clients, setClients] = useState<Array<{ id: string; name: string; email?: string }>>([]);
+  const [clients, setClients] = useState<
+    Array<{ id: string; name: string; email?: string }>
+  >([]);
   const [occupiedMap, setOccupiedMap] = useState<Record<string, string[]>>({});
   const [selectedClientId, setSelectedClientId] = useState<string>("");
   const selectedService = services.find(
@@ -125,14 +127,22 @@ export default function AppointmentForm({
     const year = base.getFullYear();
     const month = base.getMonth();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const days = [] as Array<{ date: string; day: number; isOccupied: boolean; isToday: boolean }>;
+    const days = [] as Array<{
+      date: string;
+      day: number;
+      isOccupied: boolean;
+      isToday: boolean;
+    }>;
     for (let d = 1; d <= daysInMonth; d++) {
       const date = new Date(year, month, d);
       const dateString = date.toISOString().split("T")[0];
       const occupiedTimes = getOccupiedTimes(dateString);
       const fullyBooked = occupiedTimes.length >= timeSlots.length;
       const today = new Date();
-      const isToday = today.getFullYear() === year && today.getMonth() === month && today.getDate() === d;
+      const isToday =
+        today.getFullYear() === year &&
+        today.getMonth() === month &&
+        today.getDate() === d;
       days.push({ date: dateString, day: d, isOccupied: fullyBooked, isToday });
     }
     return days;
@@ -145,12 +155,15 @@ export default function AppointmentForm({
         const base = new Date();
         base.setMonth(base.getMonth() + monthOffset);
         const monthStr = `${base.getFullYear()}-${String(base.getMonth() + 1).padStart(2, "0")}`;
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/appointments/occupiedSlots?month=${encodeURIComponent(monthStr)}`, {
-          credentials: "include",
-        });
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/appointments/occupiedSlots?month=${encodeURIComponent(monthStr)}`,
+          {
+            credentials: "include",
+          },
+        );
         if (!res.ok) return;
         const data = await res.json();
-        if (data && typeof data === 'object') setOccupiedMap(data);
+        if (data && typeof data === "object") setOccupiedMap(data);
       } catch {
         // no-op
       }
@@ -189,7 +202,9 @@ export default function AppointmentForm({
   const handleReserve = async () => {
     const payload: any = {
       service_id: formData.service_id,
-      start_date: new Date(`${formData.date}T${formData.time}:00`).toISOString(),
+      start_date: new Date(
+        `${formData.date}T${formData.time}:00`,
+      ).toISOString(),
       description: formData.description || undefined,
     };
     const role = user?.user?.role ?? UserRole.CLIENT;
@@ -219,12 +234,15 @@ export default function AppointmentForm({
         const requiresDeposit = Boolean(data?.service?.requires_deposit);
         setAwaitingPayment(requiresDeposit);
         if (!requiresDeposit) {
-          onAppointmentCreated(data);
+          onAppointmentCreated();
         }
       }),
       {
         loading: "Reservando turno...",
-        success: (m) => "Turno reservado" + (awaitingPayment ? " • requiere seña" : ""),
+        success: (m) => {
+          onAppointmentCreated();
+          return `Turno reservado${awaitingPayment ? ", por favor procede al pago" : ""}`;
+        },
         error: (e) => (e as Error).message || "Error al reservar el turno",
       },
     );
@@ -235,7 +253,9 @@ export default function AppointmentForm({
       async () => {
         const payload: any = {
           service_id: formData.service_id,
-          start_date: new Date(`${formData.date}T${formData.time}:00`).toISOString(),
+          start_date: new Date(
+            `${formData.date}T${formData.time}:00`,
+          ).toISOString(),
           description: formData.description || undefined,
         };
         const role = user?.user?.role ?? UserRole.CLIENT;
@@ -292,7 +312,7 @@ export default function AppointmentForm({
         const payment = await paymentRes.json();
 
         window.open(payment.paymentLink, "_blank");
-
+        router.refresh();
         // Start polling for confirmation
         setIsPolling(true);
         let tries = 0;
@@ -300,9 +320,12 @@ export default function AppointmentForm({
         const interval = setInterval(async () => {
           tries++;
           try {
-            const r = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/appointments/get/${appointment.id}`, {
-              credentials: "include",
-            });
+            const r = await fetch(
+              `${process.env.NEXT_PUBLIC_API_URL}/appointments/get/${appointment.id}`,
+              {
+                credentials: "include",
+              },
+            );
             const appt = await r.json();
             if (appt?.status === "confirmed") {
               clearInterval(interval);
@@ -348,13 +371,18 @@ export default function AppointmentForm({
     if (role < UserRole.STAFF) return;
     (async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/clients/getAll`, {
-          credentials: "include",
-        });
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/clients/getAll`,
+          {
+            credentials: "include",
+          },
+        );
         if (!res.ok) return;
         const data = await res.json();
         if (Array.isArray(data)) {
-          setClients(data.map((u: any) => ({ id: u.id, name: u.name, email: u.email })));
+          setClients(
+            data.map((u: any) => ({ id: u.id, name: u.name, email: u.email })),
+          );
         }
       } catch {
         // no-op
@@ -449,11 +477,34 @@ export default function AppointmentForm({
               <div className="flex items-center justify-between">
                 <label className="text-base font-medium">Fecha</label>
                 <div className="flex items-center gap-2">
-                  <Button variant="tertiary" onClick={() => setMonthOffset((m) => m - 1)}>Anterior</Button>
+                  <Button
+                    variant="tertiary"
+                    onClick={() => setMonthOffset((m) => m - 1)}
+                  >
+                    Anterior
+                  </Button>
                   <span className="text-sm text-gray-700">
-                    {MONTHS[new Date(new Date().getFullYear(), new Date().getMonth() + monthOffset, 1).getMonth()]} {new Date(new Date().getFullYear(), new Date().getMonth() + monthOffset, 1).getFullYear()}
+                    {
+                      MONTHS[
+                        new Date(
+                          new Date().getFullYear(),
+                          new Date().getMonth() + monthOffset,
+                          1,
+                        ).getMonth()
+                      ]
+                    }{" "}
+                    {new Date(
+                      new Date().getFullYear(),
+                      new Date().getMonth() + monthOffset,
+                      1,
+                    ).getFullYear()}
                   </span>
-                  <Button variant="tertiary" onClick={() => setMonthOffset((m) => m + 1)}>Siguiente</Button>
+                  <Button
+                    variant="tertiary"
+                    onClick={() => setMonthOffset((m) => m + 1)}
+                  >
+                    Siguiente
+                  </Button>
                 </div>
               </div>
               <div className="grid grid-cols-7 gap-2 mt-2">
@@ -470,13 +521,17 @@ export default function AppointmentForm({
                             ? "bg-red-100 text-red-500 border-red-200 cursor-not-allowed"
                             : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
                       }`}
-                      onClick={() => !day.isOccupied && handleDateSelect(day.date)}
+                      onClick={() =>
+                        !day.isOccupied && handleDateSelect(day.date)
+                      }
                       disabled={day.isOccupied}
                     >
                       <div className="flex items-center gap-1">
                         <span>{day.day}</span>
                         {occTimes.length > 0 && !day.isOccupied && (
-                          <span className="text-[10px] text-gray-600">{occTimes.length}/{timeSlots.length}</span>
+                          <span className="text-[10px] text-gray-600">
+                            {occTimes.length}/{timeSlots.length}
+                          </span>
                         )}
                       </div>
                       {day.isOccupied ? (
@@ -545,18 +600,25 @@ export default function AppointmentForm({
           <CardContent className="space-y-6 w-full">
             {reservedAppt && awaitingPayment && (
               <div className="p-4 border border-yellow-300 bg-yellow-50 rounded">
-                <p className="mb-2">Este servicio requiere seña. Por favor realiza el pago para confirmar el turno.</p>
+                <p className="mb-2">
+                  Este servicio requiere seña. Por favor realiza el pago para
+                  confirmar el turno.
+                </p>
                 <div className="flex items-center gap-2">
                   <button
                     className=" px-4 py-2 rounded-lg transition-colors text-blue-500 border border-blue-500 hover:bg-blue-50 flex items-center whitespace-nowrap text-center justify-center font-semibold"
                     onClick={async () => {
                       try {
                         setPaymentError(null);
-                        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/appointments/payment/${reservedAppt.id}/link`, {
-                          method: "POST",
-                          credentials: "include",
-                        });
-                        if (!res.ok) throw new Error("No se pudo generar el link de pago");
+                        const res = await fetch(
+                          `${process.env.NEXT_PUBLIC_API_URL}/appointments/payment/${reservedAppt.id}/link`,
+                          {
+                            method: "POST",
+                            credentials: "include",
+                          },
+                        );
+                        if (!res.ok)
+                          throw new Error("No se pudo generar el link de pago");
                         const data = await res.json();
                         window.open(data.paymentLink, "_blank");
                       } catch (e) {
@@ -567,15 +629,23 @@ export default function AppointmentForm({
                     <MPLogo className="w-12 h-auto inline mr-2" />
                     Pagar ahora
                   </button>
-                  {isPolling && <span className="text-sm text-gray-600">Esperando confirmación de pago...</span>}
-                  {paymentError && <span className="text-sm text-red-600">{paymentError}</span>}
+                  {isPolling && (
+                    <span className="text-sm text-gray-600">
+                      Esperando confirmación de pago...
+                    </span>
+                  )}
+                  {paymentError && (
+                    <span className="text-sm text-red-600">{paymentError}</span>
+                  )}
                 </div>
               </div>
             )}
             {/* Staff can select a client to create on behalf */}
             <RoleGuard minRole={UserRole.STAFF} fallback={<></>}>
               <div className="space-y-2 flex flex-col items-start w-full">
-                <label htmlFor="client_id" className="font-semibold">Cliente (opcional)</label>
+                <label htmlFor="client_id" className="font-semibold">
+                  Cliente (opcional)
+                </label>
                 <select
                   id="client_id"
                   className="w-full border rounded-lg p-2"
@@ -605,7 +675,8 @@ export default function AppointmentForm({
                 </p>
                 {selectedClientId && (
                   <p>
-                    <strong>Cliente seleccionado:</strong> {clients.find(c => c.id === selectedClientId)?.name}
+                    <strong>Cliente seleccionado:</strong>{" "}
+                    {clients.find((c) => c.id === selectedClientId)?.name}
                   </p>
                 )}
                 <p>

@@ -17,6 +17,7 @@ import { Service } from "@/types/Service";
 import AppointmentForm from "@/components/features/forms/AppointmentForm";
 import { useUser } from "@/context/UserContext";
 import Pagination from "@/components/ui/Pagination";
+import { useRouter } from "next/navigation";
 
 interface AppointmentsContainerProps {
   initialAppointments: Appointment[];
@@ -30,90 +31,32 @@ export default function AppointmentsContainer({
   );
   const { openDialog, closeDialog } = useDialog();
   const { user } = useUser();
+  const router = useRouter();
   const openedIdRef = useRef<string | null>(null);
   const [page, setPage] = useState<number>(1);
   const pageSize = 8;
-  const services = useMemo(() => {
-    const map = new Map<string, Service>();
-    for (const appt of appointments) {
-      if (appt.service) {
-        map.set(appt.service.id, appt.service);
-      }
-    }
-    return Array.from(map.values());
-  }, [appointments]);
-
-  const onAppointmentCreated = useCallback(
-    (newAppointment: Appointment) => {
-      const fullAppointment = {
-        ...newAppointment,
-        user: user?.user,
-      };
-
-      setAppointments((prev) => [...prev, fullAppointment]);
-      closeDialog();
-    },
-    [user, closeDialog],
-  );
-
-  const onAppointmentUpdated = useCallback(
-    (updatedAppointment: Appointment) => {
-      const serviceId =
-        updatedAppointment.service?.id || updatedAppointment.service_id;
-      const service = serviceId
-        ? services.find((s) => s.id === serviceId)
-        : undefined;
-
-      setAppointments((prev) =>
-        prev.map((apt) =>
-          apt.id === updatedAppointment.id
-            ? { ...apt, ...updatedAppointment, service }
-            : apt,
-        ),
-      );
-      closeDialog();
-    },
-    [services, closeDialog],
-  );
-
-  const handleDeleteAppointment = useCallback(
-    async (id: string): Promise<void> => {
-      const deletePromise = fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/appointments/delete/${id}`,
-        {
-          method: "DELETE",
+  const onAppointmentCreated = useCallback(async () => {
+    try {
+      const [servicesRes] = await Promise.all([
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/services/getAll`, {
           credentials: "include",
-        },
-    ).then(async (response) => {
-      if (!response.ok) {
-        try {
-          const json = await response.json();
-          throw new Error(json?.message || "Error al eliminar el turno");
-        } catch {
-          const errorText = await response.text();
-          throw new Error(errorText || "Error al eliminar el turno");
-        }
-      }
-
-        setAppointments((prev) => prev.filter((client) => client.id !== id));
-        closeDialog();
-        return "Turno eliminado correctamente";
-      });
-
-      toast.promise(deletePromise, {
-        loading: "Eliminando turno...",
-        success: (message) => message,
-        error: (error: unknown) => {
-          if (error instanceof Error) {
-            return error.message || "Error al eliminar el turno";
-          }
-          console.error(error);
-          return "Error al eliminar el turno";
-        },
-      });
-    },
-    [closeDialog],
-  );
+        }),
+      ]);
+      const services = (await servicesRes.json()) as Service[];
+      openDialog(
+        <AppointmentForm
+          services={Array.isArray(services) ? services : []}
+          appointments={[] as any}
+          onAppointmentCreated={() => {
+            closeDialog();
+            router.refresh();
+          }}
+        />,
+      );
+    } catch (_e) {
+      // no-op; could show a toast here if desired
+    }
+  }, [openDialog, closeDialog]);
 
   const openEditDialog = useCallback((appointment: Appointment) => {
     if (typeof window !== "undefined") {
@@ -141,6 +84,9 @@ export default function AppointmentsContainer({
               className="bg-gray-50 text-gray-800 hover:bg-gray-100  rounded-md px-6 py-4 mb-2 w-full shadow border border-gray-200 flex items-center justify-center"
               key={key}
               href={link.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={`Agregar a ${link.name}`}
             >
               <link.icon className="w-14 h-14" />
             </Link>
@@ -149,8 +95,6 @@ export default function AppointmentsContainer({
       </div>,
     );
   };
-
-  // Details flow moved to dedicated page
 
   return (
     <div className="w-full flex flex-col items-start justify-between gap-4">
@@ -161,15 +105,7 @@ export default function AppointmentsContainer({
         <Button
           variant="primary"
           className="w-full md:w-auto !text-2xl font-normal"
-          onClick={() =>
-            openDialog(
-              <AppointmentForm
-                services={services}
-                appointments={appointments}
-                onAppointmentCreated={onAppointmentCreated}
-              />,
-            )
-          }
+          onClick={() => onAppointmentCreated()}
         >
           Crear turno +
         </Button>
@@ -180,13 +116,13 @@ export default function AppointmentsContainer({
           appointments
             .slice((page - 1) * pageSize, page * pageSize)
             .map((appointment: Appointment) => (
-            <AppointmentCard
-              key={appointment.id}
-              appointment={appointment}
-              openEditDialog={openEditDialog}
-              openAddToCalendarDialog={openAddToCalendarDialog}
-            />
-          ))
+              <AppointmentCard
+                key={appointment.id}
+                appointment={appointment}
+                openEditDialog={openEditDialog}
+                openAddToCalendarDialog={openAddToCalendarDialog}
+              />
+            ))
         ) : (
           <div className="w-full flex items-center justify-start">
             <p className="text-2xl font-normal text-gray-900 text-start">
@@ -196,7 +132,12 @@ export default function AppointmentsContainer({
           </div>
         )}
       </section>
-      <Pagination total={appointments.length} page={page} pageSize={pageSize} onPageChange={setPage} />
+      <Pagination
+        total={appointments.length}
+        page={page}
+        pageSize={pageSize}
+        onPageChange={setPage}
+      />
     </div>
   );
 }

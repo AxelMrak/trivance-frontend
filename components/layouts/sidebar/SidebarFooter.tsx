@@ -9,10 +9,11 @@ import { useCallback } from "react";
 import type { Service } from "@/types/Service";
 import type { Appointment } from "@/types/Appointment";
 import SidebarUserCard from "@components/layouts/sidebar/SidebarUserCard";
+import { useRouter } from "next/navigation";
 
 export default function SidebarFooter() {
   const { openDialog, closeDialog } = useDialog();
-
+  const router = useRouter();
   const openNewAppointment = useCallback(async () => {
     try {
       const [servicesRes] = await Promise.all([
@@ -27,9 +28,7 @@ export default function SidebarFooter() {
           appointments={[] as any}
           onAppointmentCreated={() => {
             closeDialog();
-            if (typeof window !== "undefined") {
-              window.location.href = "/dashboard/appointments";
-            }
+            router.refresh();
           }}
         />,
       );
