@@ -7,11 +7,7 @@ import Button from "@/components/ui/Button";
 import { useRouter } from "next/navigation";
 import { LogoutIcon } from "@/components/icons/LogoutIcon";
 
-export const LogoutButton = ({
-  collapsed,
-}: {
-  collapsed: boolean;
-}) => {
+export const LogoutButton = () => {
   const { userDispatch } = useUser();
   const router = useRouter();
 
@@ -28,23 +24,22 @@ export const LogoutButton = ({
         userDispatch({ type: "LOGOUT" });
         router.push("/login");
         return error?.response?.data?.message || "Error al cerrar sesión";
-      }
+      },
     });
   };
 
   return (
     <Button
-      variant="secondary"
+      variant="tertiary"
       className={`
           w-full !text-lg flex items-center gap-2
           transition-all duration-300 ease-in-out
-          ${collapsed ? 'justify-center' : 'justify-between'}
+border !border-gray-700 !text-gray-700
         `}
       onClick={handleLogout}
     >
-      <p className={`${collapsed ? 'opacity-0 max-w-0 hidden' : 'opacity-100 max-w-fit flex '} line-clamp-1`}>
-        Cerrar sesión
-      </p>
+      <p className={` line-clamp-1`}>Cerrar sesión</p>
       <LogoutIcon className="w-6 h-6" />
-    </Button>);
+    </Button>
+  );
 };

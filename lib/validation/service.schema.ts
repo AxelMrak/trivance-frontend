@@ -20,6 +20,7 @@ export const serviceSchema = z.object({
   duration: z.string({
     required_error: "La duración del servicio es obligatoria",
   }),
+  requires_deposit: z.boolean().optional().default(false),
 });
 
 export type ServiceFormValues = z.infer<typeof serviceSchema>;

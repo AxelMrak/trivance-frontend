@@ -1,5 +1,11 @@
 "use client";
-import React, { useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useDialog } from "@/context/ModalContext";
 import toast from "react-hot-toast";
 import Button from "@/components/ui/Button";
@@ -9,99 +15,61 @@ import { generateCalendarLinks } from "@/utils/functions";
 import Link from "next/link";
 import { Service } from "@/types/Service";
 import AppointmentForm from "@/components/features/forms/AppointmentForm";
-import AppointmentDetailsForm from "@/components/features/forms/AppointmentDetailsForm";
 import { useUser } from "@/context/UserContext";
+import Pagination from "@/components/ui/Pagination";
+import { useRouter } from "next/navigation";
+import SearchInput from "@/components/ui/SearchInput";
+import NotFoundMsg from "@/components/ui/NotFoundMsg";
 
 interface AppointmentsContainerProps {
   initialAppointments: Appointment[];
-  initialServices: Service[];
 }
 
 export default function AppointmentsContainer({
   initialAppointments,
-  initialServices,
 }: AppointmentsContainerProps) {
-  const [appointments, setAppointments] =
-    useState<Appointment[]>(initialAppointments);
+  const [appointments, setAppointments] = useState<Appointment[]>(
+    initialAppointments ?? [],
+  );
   const { openDialog, closeDialog } = useDialog();
   const { user } = useUser();
+  const router = useRouter();
+  const openedIdRef = useRef<string | null>(null);
+  const [page, setPage] = useState<number>(1);
+  const [query, setQuery] = useState<string>("");
+  const pageSize = 8;
+  const onAppointmentCreated = useCallback(async () => {
+    try {
+      const [servicesRes] = await Promise.all([
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/services/getAll`, {
+          credentials: "include",
+        }),
+      ]);
+      const services = (await servicesRes.json()) as Service[];
+      openDialog(
+        <AppointmentForm
+          services={Array.isArray(services) ? services : []}
+          appointments={[] as any}
+          onAppointmentCreated={() => {
+            closeDialog();
+            router.refresh();
+          }}
+        />,
+      );
+    } catch (_e) {
+      // no-op; could show a toast here if desired
+    }
+  }, [openDialog, closeDialog]);
 
-  const onAppointmentCreated = (newAppointment: Appointment) => {
-    const service = initialServices.find(
-      (s) => s.id === newAppointment.service_id,
-    );
-
-    const fullAppointment = {
-      ...newAppointment,
-      user: user?.user,
-      service,
-    };
-
-    setAppointments((prev) => [...prev, fullAppointment]);
-    closeDialog();
-  };
-
-  const onAppointmentUpdated = (updatedAppointment: Appointment) => {
-    const service = initialServices.find(
-      (s) => s.id === updatedAppointment.service_id,
-    );
-
-    setAppointments((prev) =>
-      prev.map((apt) =>
-        apt.id === updatedAppointment.id
-          ? { ...apt, ...updatedAppointment, service }
-          : apt,
-      ),
-    );
-    closeDialog();
-  };
-
-  const handleDeleteAppointment = async (id: string): Promise<void> => {
-    const deletePromise = fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/appointments/delete/${id}`,
-      {
-        method: "DELETE",
-        credentials: "include",
-      },
-    ).then(async (response) => {
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || "Error al eliminar el turno");
-      }
-
-      setAppointments((prev) => prev.filter((client) => client.id !== id));
-      closeDialog();
-      return "Turno eliminado correctamente";
-    });
-
-    toast.promise(deletePromise, {
-      loading: "Eliminando turno...",
-      success: (message) => message,
-      error: (error: unknown) => {
-        if (error instanceof Error) {
-          return error.message || "Error al eliminar el turno";
-        }
-        console.error(error);
-        return "Error al eliminar el turno";
-      },
-    });
-  };
-
-  const openEditDialog = (appointment: Appointment) => {
-    openDialog(
-      <AppointmentDetailsForm
-        initialAppointment={appointment}
-        services={initialServices}
-        onAppointmentUpdated={onAppointmentUpdated}
-        onDelete={handleDeleteAppointment}
-        onClose={closeDialog}
-      />,
-    );
-  };
+  const openEditDialog = useCallback((appointment: Appointment) => {
+    if (typeof window !== "undefined") {
+      window.location.href = `/dashboard/appointments/${appointment.id}`;
+    }
+  }, []);
 
   const openAddToCalendarDialog = (appointment: Appointment) => {
     const links = generateCalendarLinks({
-      title: `Turno con ${appointment.user?.name}`,
+      title: `Turno con ${appointment.client?.user?.name || appointment.user?.name}`,
       description: appointment.description || "Sin descripción",
       location: appointment.service?.location || "Sin ubicación",
       start: new Date(appointment.start_date),
@@ -119,6 +87,9 @@ export default function AppointmentsContainer({
               className="bg-gray-50 text-gray-800 hover:bg-gray-100  rounded-md px-6 py-4 mb-2 w-full shadow border border-gray-200 flex items-center justify-center"
               key={key}
               href={link.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={`Agregar a ${link.name}`}
             >
               <link.icon className="w-14 h-14" />
             </Link>
@@ -128,24 +99,31 @@ export default function AppointmentsContainer({
     );
   };
 
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value.toLowerCase();
+    setQuery(query);
+    const filtered = initialAppointments.filter((appointment) => {
+      const clientName = appointment.client?.user?.name
+        ?.toLowerCase()
+        .includes(query);
+      const serviceName = appointment.service?.name
+        ?.toLowerCase()
+        .includes(query);
+      const userName = appointment.user?.name?.toLowerCase().includes(query);
+      return clientName || serviceName || userName;
+    });
+    setAppointments(filtered);
+    setPage(1);
+  };
+
   return (
     <div className="w-full flex flex-col items-start justify-between gap-4">
       <div className="w-full flex items-center justify-between gap-4">
-        <span className="text-2xl font-normal text-gray-500">
-          {appointments.length} turnos encontrados
-        </span>
+        <SearchInput value={query} onChange={handleSearch} />
         <Button
           variant="primary"
-          className="w-full md:w-auto !text-2xl font-normal"
-          onClick={() =>
-            openDialog(
-              <AppointmentForm
-                services={initialServices}
-                appointments={appointments}
-                onAppointmentCreated={onAppointmentCreated}
-              />,
-            )
-          }
+          className="w-full md:w-auto !text-md font-normal whitespace-nowrap h-full"
+          onClick={() => onAppointmentCreated()}
         >
           Crear turno +
         </Button>
@@ -153,23 +131,26 @@ export default function AppointmentsContainer({
 
       <section className="w-full grid grid-cols-1 md:grid-cols-2  gap-4">
         {appointments.length > 0 ? (
-          appointments.map((appointment: Appointment) => (
-            <AppointmentCard
-              key={appointment.id}
-              appointment={appointment}
-              openEditDialog={openEditDialog}
-              openAddToCalendarDialog={openAddToCalendarDialog}
-            />
-          ))
+          appointments
+            .slice((page - 1) * pageSize, page * pageSize)
+            .map((appointment: Appointment) => (
+              <AppointmentCard
+                key={appointment.id}
+                appointment={appointment}
+                openEditDialog={openEditDialog}
+                openAddToCalendarDialog={openAddToCalendarDialog}
+              />
+            ))
         ) : (
-          <div className="w-full flex items-center justify-start">
-            <p className="text-2xl font-normal text-gray-900 text-start">
-              No se encontraron turnos. Podés crear uno nuevo haciendo click en
-              el botón de arriba.
-            </p>
-          </div>
+          <NotFoundMsg message="No se encontraron turnos." />
         )}
       </section>
+      <Pagination
+        total={appointments.length}
+        page={page}
+        pageSize={pageSize}
+        onPageChange={setPage}
+      />
     </div>
   );
 }

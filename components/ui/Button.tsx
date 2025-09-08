@@ -1,15 +1,64 @@
 "use client";
 import React from "react";
 
-type ButtonProps = {
+type BaseProps = {
   children: React.ReactNode;
   variant?: "primary" | "secondary" | "tertiary" | "destructive";
-  type?: "button" | "submit" | "reset";
-  onClick?: () => void;
   disabled?: boolean;
   className?: string;
   isLoading?: boolean;
+  size?: "sm" | "md" | "lg";
 };
+
+type ButtonProps = BaseProps & {
+  type?: "button" | "submit" | "reset";
+  onClick?: () => void;
+};
+
+type SizeClasses = {
+  [key: string]: string;
+};
+
+type VariantClasses = {
+  [key: string]: string;
+};
+
+const getButtonClasses = (variant: string, size: string) => {
+  const baseClasses = `
+    inline-flex items-center justify-center  rounded-md
+    disabled:opacity-50 disabled:cursor-not-allowed
+hover:shadow transition-shadow
+cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2
+  `;
+
+  const sizeClasses: SizeClasses = {
+    sm: "px-3 py-1.5 text-sm",
+    md: "px-4 py-2 text-sm",
+    lg: "px-6 py-3 text-base",
+  };
+
+  const variantClasses: VariantClasses = {
+    primary:
+      "bg-primary-base text-white border border-primary-base  focus:ring-primary-500",
+    secondary:
+      "bg-secondary-900 text-white border border-secondary-900  focus:ring-secondary-500",
+    tertiary:
+      "bg-white text-primary-base border border-primary-base focus:ring-primary-500",
+    destructive:
+      "bg-white text-red-500 border border-red-500  focus:ring-red-500",
+  };
+
+  return `${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]}`
+    .replace(/\s+/g, " ")
+    .trim();
+};
+
+const LoadingContent = () => (
+  <div className="flex items-center gap-2">
+    <div className="animate-spin h-4 w-4 border-2 border-t-transparent rounded-full border-current" />
+    <span>Cargando...</span>
+  </div>
+);
 
 const Button: React.FC<ButtonProps> = ({
   children,
@@ -19,45 +68,18 @@ const Button: React.FC<ButtonProps> = ({
   disabled = false,
   className = "",
   isLoading = false,
+  size = "md",
 }) => {
-  const baseStyles =
-    "inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 shadow hover:shadow-sm transition-all cursor-pointer transition-colors ";
-
-  const variants = {
-    primary:
-      "bg-primary-base text-white hover:bg-transparent hover:text-primary-base hover:border-primary-base",
-    secondary:
-      "bg-secondary-900 text-white hover:bg-transparent hover:text-secondary-900 hover:border-secondary-900",
-    tertiary:
-      "bg-white text-primary-base border border-primary-base hover:border-primary-600 hover:text-primary-600 hover:bg-transparent",
-    destructive:
-      "bg-transparent text-red-500 border border-red-500 hover:bg-red-500 hover:text-white",
-  };
-
-  const disabledStyles = "opacity-50 !cursor-not-allowed";
-  const loadingStyles = "opacity-50 !cursor-not-allowed";
-
-  const variantStyles = variants[variant];
+  const classes = `${getButtonClasses(variant, size)} ${className}`;
 
   return (
     <button
       type={type}
-      onClick={disabled ? undefined : onClick}
-      disabled={disabled}
-      className={`${baseStyles} ${variantStyles} ${disabled ? disabledStyles : ""} ${className} ${isLoading ? loadingStyles : ""}`}
+      onClick={disabled || isLoading ? undefined : onClick}
+      disabled={disabled || isLoading}
+      className={classes}
     >
-      {children && !isLoading ? (
-        children
-      ) : (
-        <div className="flex items-center">
-          <p className="font-normal text-current">
-            {isLoading ? "Cargando..." : ""}
-          </p>
-          {isLoading && (
-            <div className="ml-2 animate-spin h-5 w-5 border-4 border-t-transparent rounded-full border-current"></div>
-          )}
-        </div>
-      )}
+      {isLoading ? <LoadingContent /> : children}
     </button>
   );
 };

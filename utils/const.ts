@@ -1,5 +1,6 @@
+import { UserRole } from "@/types/User";
 
-export const DAYS_OF_WEEK = ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"]
+export const DAYS_OF_WEEK = ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"];
 
 export const MONTHS = [
   "Enero",
@@ -14,4 +15,13 @@ export const MONTHS = [
   "Octubre",
   "Noviembre",
   "Diciembre",
-]
+];
+
+export const ROLE_LABELS: Record<UserRole, string> = {
+  [UserRole.GUEST]: "Invitado",
+  [UserRole.CLIENT]: "Cliente",
+  [UserRole.STAFF]: "Personal",
+  [UserRole.MANAGER]: "Gerente",
+  [UserRole.ADMIN]: "Administrador",
+  [UserRole.SUPER_USER]: "Super Usuario",
+} as const;
