@@ -32,7 +32,7 @@ export const LoginForm = (): ReactElement => {
       success: (data) => {
         if (data?.user) {
           userDispatch({ type: "SET_USER", payload: data.user });
-          router.refresh();
+          router.push("/dashboard");
           return `Bienvenido/a ${data?.user?.name}`;
         }
         return "Iniciando sesión...";

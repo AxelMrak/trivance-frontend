@@ -13,10 +13,11 @@ import { Controller, useForm } from "react-hook-form";
 import { register } from "@/lib/api/auth";
 import Input from "@/components/ui/Input";
 import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export const RegisterForm = (): ReactElement => {
   const { user, userDispatch } = useUser();
-
+  const router = useRouter();
   const {
     control,
     handleSubmit,
@@ -32,6 +33,7 @@ export const RegisterForm = (): ReactElement => {
       success: (data) => {
         if (data?.user) {
           userDispatch({ type: "SET_USER", payload: data.user });
+          router.push("/dashboard");
           return `Bienvenido/a ${data?.user?.name}`;
         }
         return "Iniciando sesión...";
