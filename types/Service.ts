@@ -17,6 +17,7 @@ export interface CreateServicePayload {
   description: string;
   price: number;
   duration: string;
+  requires_deposit?: boolean;
 }
 
 export interface UpdateServicePayload {
@@ -25,4 +26,5 @@ export interface UpdateServicePayload {
   description: string;
   price: number | string;
   duration: string | IntervalObject;
+  requires_deposit?: boolean;
 }

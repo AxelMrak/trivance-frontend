@@ -28,6 +28,9 @@ export default function ServiceCard({
               {formatInterval(service.duration)}
             </span>
           </div>
+          {service.requires_deposit && (
+            <span className="text-xs font-semibold text-blue-700 bg-blue-100 border border-blue-300 rounded px-2 py-1">Requiere seña</span>
+          )}
         </div>
       </header>
       <p className="text-md font-normal text-gray-400 max-h-20 truncate max-w-full">

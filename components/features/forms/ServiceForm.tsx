@@ -105,14 +105,27 @@ export default function ServiceForm({
         <label className="block text-xl font-normal text-gray-900 ">
           Duración del servicio
         </label>
+      <Controller
+        name="duration"
+        control={control}
+        render={({ field }) => <DurationPicker {...field} />}
+      />
+      {errors.duration && (
+        <p className="mt-1 text-sm text-red-600">{errors.duration.message}</p>
+      )}
+    </div>
+
+      <div className="w-full flex items-center gap-2">
         <Controller
-          name="duration"
+          name="requires_deposit"
           control={control}
-          render={({ field }) => <DurationPicker {...field} />}
+          render={({ field }) => (
+            <label className="inline-flex items-center gap-2">
+              <input type="checkbox" checked={!!field.value} onChange={(e) => field.onChange(e.target.checked)} />
+              <span className="text-gray-800">Requiere seña</span>
+            </label>
+          )}
         />
-        {errors.duration && (
-          <p className="mt-1 text-sm text-red-600">{errors.duration.message}</p>
-        )}
       </div>
 
       <div className="w-full grid grid-cols-2 items-center gap-4 ">
