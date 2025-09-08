@@ -9,6 +9,7 @@ import toast from 'react-hot-toast';
 import Button from '@/components/ui/Button';
 import ClientDetails from '@/components/features/forms/ClientDetails';
 import ClientForm from '@/components/features/forms/ClientForm';
+import Pagination from '@/components/ui/Pagination';
 
 
 
@@ -20,7 +21,9 @@ interface ClientsContainerProps {
 export default function ClientsContainer({
   initialClients,
 }: ClientsContainerProps) {
-  const [clients, setClients] = useState<Client[]>(initialClients);
+  const [clients, setClients] = useState<Client[]>(initialClients ?? []);
+  const [page, setPage] = useState<number>(1);
+  const pageSize = 8;
   const { openDialog, closeDialog } = useDialog();
 
   const handleDeleteClient = async (id: string): Promise<void> => {
@@ -32,8 +35,13 @@ export default function ClientsContainer({
       }
     ).then(async (response) => {
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || 'Error al eliminar el cliente');
+        try {
+          const json = await response.json();
+          throw new Error(json?.message || 'Error al eliminar el cliente');
+        } catch {
+          const errorText = await response.text();
+          throw new Error(errorText || 'Error al eliminar el cliente');
+        }
       }
 
       setClients((prev) => prev.filter((client) => client.id !== id));
@@ -84,7 +92,9 @@ export default function ClientsContainer({
       </div>
       <section className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
         {clients.length > 0 ? (
-          clients.map((client) => (
+          clients
+            .slice((page - 1) * pageSize, page * pageSize)
+            .map((client) => (
             <ClientCard
               key={client.id}
               client={client}
@@ -101,6 +111,7 @@ export default function ClientsContainer({
           </div>
         )}
       </section>
+      <Pagination total={clients.length} page={page} pageSize={pageSize} onPageChange={setPage} />
     </div>
   );
 }

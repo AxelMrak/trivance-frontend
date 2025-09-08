@@ -10,7 +10,7 @@ import DeleteDialog from '@/components/layouts/dialogs/DeleteDialog';
 import { useDialog } from '@/context/ModalContext';
 import { ServiceFormValues } from '@/lib/validation/service.schema';
 import SearchInput from '@/components/ui/SearchInput';
-import { set } from 'zod';
+import Pagination from '@/components/ui/Pagination';
 
 interface ServicesContainerProps {
   initialServices: Service[];
@@ -19,9 +19,11 @@ interface ServicesContainerProps {
 export default function ServicesContainer({
   initialServices,
 }: ServicesContainerProps) {
-  const [services, setServices] = useState<Service[]>(initialServices);
+  const [services, setServices] = useState<Service[]>(initialServices ?? []);
   const [query, setQuery] = useState<string>('');
   const { openDialog, closeDialog } = useDialog();
+  const [page, setPage] = useState<number>(1);
+  const pageSize = 8;
 
   const filteredServices = services.filter((service) =>
     service.name.toLowerCase().includes(query.toLowerCase())
@@ -40,8 +42,13 @@ export default function ServicesContainer({
       },
     ).then(async (response) => {
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || 'Error al crear el servicio');
+        try {
+          const json = await response.json();
+          throw new Error(json?.message || 'Error al crear el servicio');
+        } catch {
+          const errorText = await response.text();
+          throw new Error(errorText || 'Error al crear el servicio');
+        }
       }
       const newService = await response.json();
       setServices((prev) => [...prev, newService]);
@@ -72,8 +79,13 @@ export default function ServicesContainer({
       },
     ).then(async (response) => {
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || 'Error al actualizar el servicio');
+        try {
+          const json = await response.json();
+          throw new Error(json?.message || 'Error al actualizar el servicio');
+        } catch {
+          const errorText = await response.text();
+          throw new Error(errorText || 'Error al actualizar el servicio');
+        }
       }
       const updatedService = await response.json();
       setServices((prev) =>
@@ -104,8 +116,13 @@ export default function ServicesContainer({
       },
     ).then(async (response) => {
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || 'Error al eliminar el servicio');
+        try {
+          const json = await response.json();
+          throw new Error(json?.message || 'Error al eliminar el servicio');
+        } catch {
+          const errorText = await response.text();
+          throw new Error(errorText || 'Error al eliminar el servicio');
+        }
       }
       setServices((prev) => prev.filter((service) => service.id !== id));
       closeDialog();
@@ -169,7 +186,9 @@ export default function ServicesContainer({
         </span>
       <section className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
         {filteredServices.length > 0 ? (
-          filteredServices.map((service) => (
+          filteredServices
+            .slice((page - 1) * pageSize, page * pageSize)
+            .map((service) => (
             <ServiceCard
               key={service.id}
               service={service}
@@ -186,6 +205,7 @@ export default function ServicesContainer({
           </div>
         )}
       </section>
+      <Pagination total={filteredServices.length} page={page} pageSize={pageSize} onPageChange={setPage} />
     </div>
   );
 }	

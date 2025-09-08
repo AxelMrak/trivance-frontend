@@ -2,6 +2,8 @@
 
 import { StarIcon } from "@/components/icons/StarIcon";
 import React from "react";
+import { useUser } from "@/context/UserContext";
+import { UserRole } from "@/types/User";
 import {
   PieChart,
   Pie,
@@ -83,6 +85,11 @@ const Stats: React.FC<StatsProps> = ({
   summaryStats,
   isLoading = false,
 }) => {
+  const { user } = useUser();
+  const role = user?.user?.role ?? UserRole.CLIENT;
+  if (role < UserRole.STAFF) {
+    return null; // Guard: only staff+ can see stats
+  }
   const cardClass = "bg-white rounded-xl p-6 border border-gray-200";
 
   // Default values for summaryStats
