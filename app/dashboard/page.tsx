@@ -1,34 +1,48 @@
 import Calendar from "@/components/features/calendar";
+import { Suspense } from "react";
+import ClientContainerSkeleton from "@/components/ui/skeletons/ClientContainerSkeleton";
 import Stats from "@/components/features/stats";
 import { MainHeader } from "@/components/layouts/dashboard/MainHeader";
 import { fetchWithToken } from "@/lib/api/fetchWithToken";
+// RoleGuard is client-only; Stats guards itself by role client-side
 
 export default async function Dashboard() {
-  const res = await fetchWithToken(
+  // Appointments
+  const appointmentsRes = await fetchWithToken(
     "/appointments/getAll?include=service",
     "GET",
   );
-  const appointments = await res.json();
+  const appointments = appointmentsRes.ok ? await appointmentsRes.json() : [];
 
-  const summaryStats = await fetchWithToken(
+  // Summary stats
+  const summaryRes = await fetchWithToken(
     "/stats/appointments/summary/",
     "GET",
-  ).then((res) => res.json());
+  );
+  const summaryStats = summaryRes.ok ? await summaryRes.json() : undefined;
 
-  const mostUsedService = await fetchWithToken(
+  // Most used service
+  const musRes = await fetchWithToken(
     "/stats/appointments/most-used-service?include=service",
     "GET",
-  ).then((res) => res.json());
-
-  console.log("Most Used Service:", mostUsedService);
-  console.log("Summary Stats:", summaryStats);
-  console.log("Appointments:", appointments);
+  );
+  const mostUsedService = musRes.ok ? await musRes.json() : undefined;
 
   return (
     <>
       <MainHeader />
-      <Calendar appointments={appointments} />
-      <Stats summaryStats={summaryStats} mostUsedService={mostUsedService} />
+      <Suspense fallback={<ClientContainerSkeleton />}>
+        <Calendar appointments={appointments} />
+      </Suspense>
+      <Suspense
+        fallback={
+          <div className="bg-white border border-gray-200 rounded p-6">
+            Cargando estadísticas...
+          </div>
+        }
+      >
+        <Stats summaryStats={summaryStats} mostUsedService={mostUsedService} />
+      </Suspense>
     </>
   );
 }

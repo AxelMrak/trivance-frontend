@@ -8,10 +8,11 @@ import { isSameDay } from "@utils/boolean";
 import { ROLE_LABELS } from "@/utils/const";
 
 export const getAppointmentsForDate = (
-  appointments: Appointment[],
+  appointments: Appointment[] | unknown,
   date: Date,
 ): Appointment[] => {
-  return appointments.filter((appointment) => {
+  if (!Array.isArray(appointments)) return [];
+  return appointments.filter((appointment: Appointment) => {
     const appointmentDate = new Date(appointment.start_date);
     return isSameDay(appointmentDate, date);
   });
@@ -20,9 +21,10 @@ export const getAppointmentsForDate = (
 export const generateCalendarDays = (
   year: number,
   month: number,
-  appointments: Appointment[],
+  appointments: Appointment[] | unknown,
   selectedDate?: Date,
 ): CalendarDay[] => {
+  const safeAppointments: Appointment[] = Array.isArray(appointments) ? appointments : [];
   const firstDay = new Date(year, month, 1);
   const startDate = new Date(firstDay);
   const today = new Date();
@@ -33,7 +35,7 @@ export const generateCalendarDays = (
   const currentDate = new Date(startDate);
 
   for (let i = 0; i < 42; i++) {
-    const dayAppointments = getAppointmentsForDate(appointments, currentDate);
+    const dayAppointments = getAppointmentsForDate(safeAppointments, currentDate);
 
     days.push({
       date: new Date(currentDate),

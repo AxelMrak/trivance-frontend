@@ -1,3 +1,5 @@
+"use client";
+import { useEffect, useState } from "react";
 import { Appointment } from "@/types/Appointment";
 import Button from "@/components/ui/Button";
 import { SendIcon } from "@/components/icons/SendIcon";
@@ -5,6 +7,7 @@ import { formatStatus } from "@/utils/format";
 import Badge from "@/components/ui/Badge";
 import RoleGuard from "@/components/features/global/RoleGuard";
 import { UserRole } from "@/types/User";
+import Link from "next/link";
 
 import dynamic from "next/dynamic";
 
@@ -20,17 +23,27 @@ export default function AppointmentCard({
   openEditDialog?: (appointment: Appointment) => void;
   openAddToCalendarDialog?: (appointment: Appointment) => void;
 }) {
-  const appointmentIsToday =
-    new Date(appointment.start_date).toDateString() ===
-    new Date().toDateString();
+  const [isToday, setIsToday] = useState(false);
+  useEffect(() => {
+    const appt = new Date(appointment.start_date);
+    const now = new Date();
+    const sameDay =
+      appt.getFullYear() === now.getFullYear() &&
+      appt.getMonth() === now.getMonth() &&
+      appt.getDate() === now.getDate();
+    setIsToday(sameDay);
+  }, [appointment.start_date]);
   return (
     <article className="w-full flex flex-col gap-2 p-4 bg-white border border-gray-300 rounded-md">
       <div className="w-full flex flex-row items-start justify-between gap-4">
-        <RoleGuard minRole={UserRole.ADMIN}>
+        <div className="flex flex-col">
           <h2 className="text-xl font-semibold text-gray-800">
-            {appointment.user?.name}
+            Cliente: {appointment.client?.name || appointment.client?.user?.name || appointment.user?.name || 'Sin cliente'}
           </h2>
-        </RoleGuard>
+          <p className="text-sm text-gray-600">
+            Creado por: {appointment.user?.name || 'Desconocido'}
+          </p>
+        </div>
         <div className="flex items-center justify-center gap-2 text-lg">
           <Badge
             variant={
@@ -46,7 +59,7 @@ export default function AppointmentCard({
           >
             {formatStatus(appointment.status)}
           </Badge>
-          {appointmentIsToday && (
+          {isToday && (
             <Badge variant="special" size="lg">
               Hoy
             </Badge>
@@ -81,13 +94,9 @@ export default function AppointmentCard({
             Agregar al calendario
           </Button>
         </RoleGuard>
-        <Button
-          variant="primary"
-          className="w-full"
-          onClick={() => openEditDialog(appointment)}
-        >
-          Ver detalle
-        </Button>
+        <Link href={`/dashboard/appointments/${appointment.id}`} className="w-full">
+          <Button variant="primary" className="w-full">Ver detalle</Button>
+        </Link>
       </div>
     </article>
   );

@@ -233,7 +233,7 @@ const Calendar: React.FC<CalendarProps> = ({
                             {formatTime(new Date(appointment.start_date))}
                           </p>
                           <CustomLink
-                            href={`dashboard/appointments/${appointment.id}`}
+                            href={`/dashboard/appointments/${appointment.id}`}
                             variant="primary"
                             className="mt-1"
                           >
