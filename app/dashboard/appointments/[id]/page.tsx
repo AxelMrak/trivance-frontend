@@ -12,7 +12,10 @@ export default async function AppointmentDetailsPage({
 }) {
   try {
     const [apptRes, servicesRes] = await Promise.all([
-      fetchWithToken(`/appointments/get/${params.id}?include=service,user,client`, "GET"),
+      fetchWithToken(
+        `/appointments/get/${params.id}?include=service,user,client`,
+        "GET",
+      ),
       fetchWithToken("/services/getAll", "GET"),
     ]);
 
@@ -31,14 +34,21 @@ export default async function AppointmentDetailsPage({
     return (
       <>
         <MainHeader title="Detalle del turno" />
-        <div className="w-full min-h-[85svh] flex flex-col items-start justify-start gap-4 p-4 text-center bg-white">
+        <div className="w-full min-h-[80svh] flex flex-col items-start justify-start gap-4 p-4 text-center bg-white">
           <Suspense fallback={<AppointmentDetailsSkeleton />}>
-            <AppointmentDetailsView initialAppointment={appointment} services={Array.isArray(services) ? services : []} />
+            <AppointmentDetailsView
+              initialAppointment={appointment}
+              services={Array.isArray(services) ? services : []}
+            />
           </Suspense>
         </div>
       </>
     );
   } catch (error) {
-    return <ErrorPageComponent error={(error as Error) || new Error("Error desconocido")} />;
+    return (
+      <ErrorPageComponent
+        error={(error as Error) || new Error("Error desconocido")}
+      />
+    );
   }
 }

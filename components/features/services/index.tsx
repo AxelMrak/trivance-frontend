@@ -15,14 +15,23 @@ export default async function Services() {
     const services = await res.json();
 
     return (
-      <div className="w-full min-h-[85svh] flex flex-col items-start justify-start gap-4 p-4 text-center bg-white">
-        <SearchInput placeholder="Buscar servicio" className="w-full text-2xl" />
+      <div className="w-full min-h-[80svh] flex flex-col items-start justify-start gap-4 p-4 text-center bg-white">
+        <SearchInput
+          placeholder="Buscar servicio"
+          className="w-full text-2xl"
+        />
         <Suspense fallback={<ServicesContainerSkeleton />}>
-          <ServicesContainer initialServices={Array.isArray(services) ? services : []} />
+          <ServicesContainer
+            initialServices={Array.isArray(services) ? services : []}
+          />
         </Suspense>
       </div>
     );
   } catch (error) {
-    return <ErrorPageComponent error={(error as Error) || new Error("Error desconocido")} />;
+    return (
+      <ErrorPageComponent
+        error={(error as Error) || new Error("Error desconocido")}
+      />
+    );
   }
 }

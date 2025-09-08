@@ -15,7 +15,7 @@ export default async function Clients() {
     const clients = await res.json();
     console.log(clients);
     return (
-      <div className="w-full min-h-[85svh] flex flex-col items-start justify-start gap-4 p-4 text-center bg-white">
+      <div className="w-full min-h-[80svh] flex flex-col items-start justify-start gap-4 p-4 text-center bg-white">
         <SearchInput placeholder="Buscar cliente" className="w-full text-2xl" />
         <Suspense fallback={<ClientContainerSkeleton />}>
           <ClientsContainer

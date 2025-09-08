@@ -23,6 +23,7 @@ import { FormData, timeSlots } from "@/utils/appointment";
 import { useEffect } from "react";
 import { MONTHS } from "@/utils/const";
 import { useRouter } from "next/navigation";
+import { formatInterval } from "@/utils/format";
 
 const Card = ({
   children,
@@ -374,20 +375,11 @@ export default function AppointmentForm({
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-bold">Reservar Cita</h1>
-          <Badge variant="tertiary">
-            Paso {currentStep} de {totalSteps}
-          </Badge>
-        </div>
-
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div
-            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-            style={{ width: `${(currentStep / totalSteps) * 100}%` }}
-          />
-        </div>
+      <div className="my-4 flex items-center justify-between w-full">
+        <h1 className="text-2xl font-bold">Reservar Cita</h1>
+        <Badge variant="secondary" size="lg">
+          Paso <strong className="mx-1">{currentStep}</strong> de {totalSteps}
+        </Badge>
       </div>
 
       {currentStep === 1 && (
@@ -400,7 +392,7 @@ export default function AppointmentForm({
             <CardDescription>Elige el servicio que necesitas</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 w-full">
-            <div className="grid gap-4 max-h-[400px] overflow-y-auto">
+            <div className="grid gap-4 max-h-[400px] overflow-y-auto shadow p-2 border border-gray-200 rounded-lg">
               {services &&
                 services.map((service) => (
                   <div
@@ -412,24 +404,26 @@ export default function AppointmentForm({
                     }`}
                     onClick={() => handleServiceSelect(service.id)}
                   >
-                    <div className="flex justify-between items-start flex-wrap">
-                      <div>
+                    <div className="flex flex-col items-start gap-2 w-full">
+                      <div className="flex items-center gap-2 w-full justify-between">
                         <h3 className="font-semibold capitalize">
                           {service.name}
                         </h3>
-                        <p className="text-sm text-gray-600">
-                          Duración: {service.duration.hours}{" "}
-                          {service.duration.hours > 1 ? "horas" : "hora"}
+                        <p className="font-semibold text-lg text-gray-600">
+                          ${service.price}
                         </p>
-                        {service.requires_deposit && (
-                          <Badge variant="secondary" className="mt-1">
-                            Requiere depósito
-                          </Badge>
-                        )}
                       </div>
-                      <div className="text-right">
-                        <p className="font-bold text-lg">${service.price}</p>
-                      </div>
+                      <p className="text-sm text-gray-500 text-left">
+                        Duración aproximada:{" "}
+                        <span className="capitalize">
+                          {formatInterval(service.duration)}
+                        </span>
+                      </p>
+                      {service.requires_deposit && (
+                        <Badge variant="secondary" className="mt-1">
+                          Requiere depósito
+                        </Badge>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -456,38 +450,35 @@ export default function AppointmentForm({
           </CardHeader>
           <CardContent className="space-y-6 w-full">
             <div>
-              <div className="flex items-center justify-between">
-                <label className="text-base font-medium">Fecha</label>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="tertiary"
-                    onClick={() => setMonthOffset((m) => m - 1)}
-                  >
-                    Anterior
-                  </Button>
-                  <span className="text-sm text-gray-700">
-                    {
-                      MONTHS[
-                        new Date(
-                          new Date().getFullYear(),
-                          new Date().getMonth() + monthOffset,
-                          1,
-                        ).getMonth()
-                      ]
-                    }{" "}
-                    {new Date(
-                      new Date().getFullYear(),
-                      new Date().getMonth() + monthOffset,
-                      1,
-                    ).getFullYear()}
-                  </span>
-                  <Button
-                    variant="tertiary"
-                    onClick={() => setMonthOffset((m) => m + 1)}
-                  >
-                    Siguiente
-                  </Button>
-                </div>
+              <div className="flex items-center justify-between w-full !text-xs">
+                <Button
+                  variant="tertiary"
+                  onClick={() => setMonthOffset((m) => m - 1)}
+                >
+                  Mes anterior
+                </Button>
+                <span className=" text-gray-700">
+                  {
+                    MONTHS[
+                      new Date(
+                        new Date().getFullYear(),
+                        new Date().getMonth() + monthOffset,
+                        1,
+                      ).getMonth()
+                    ]
+                  }{" "}
+                  {new Date(
+                    new Date().getFullYear(),
+                    new Date().getMonth() + monthOffset,
+                    1,
+                  ).getFullYear()}
+                </span>
+                <Button
+                  variant="tertiary"
+                  onClick={() => setMonthOffset((m) => m + 1)}
+                >
+                  Mes siguiente
+                </Button>
               </div>
               <div className="grid grid-cols-7 gap-2 mt-2">
                 {generateCalendarDays().map((day, index) => {
@@ -511,7 +502,7 @@ export default function AppointmentForm({
                       <div className="flex items-center gap-1">
                         <span>{day.day}</span>
                         {occTimes.length > 0 && !day.isOccupied && (
-                          <span className="text-[10px] text-gray-600">
+                          <span className="text-[10px] text-currentColor">
                             {occTimes.length}/{timeSlots.length}
                           </span>
                         )}
