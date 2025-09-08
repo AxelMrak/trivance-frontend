@@ -1,5 +1,5 @@
 import { LogoColor } from "@/components/icons/Logos";
-import SearchInput from "@/components/ui/SearchInput";
+import GlobalSearch from "@/components/features/search/GlobalSearch";
 
 export default function SidebarHeader() {
   return (
@@ -12,7 +12,7 @@ export default function SidebarHeader() {
           id="SidebarHeader"
         />
       </div>
-      <SearchInput placeholder="Buscar..." />
+      <GlobalSearch />
     </header>
   );
 }
