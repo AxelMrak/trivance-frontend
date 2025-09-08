@@ -39,13 +39,13 @@ cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2
 
   const variantClasses: VariantClasses = {
     primary:
-      "bg-primary-base text-white border border-primary-base hover:bg-primary-600 focus:ring-primary-500",
+      "bg-primary-base text-white border border-primary-base  focus:ring-primary-500",
     secondary:
-      "bg-secondary-900 text-white border border-secondary-900 hover:bg-secondary-800 focus:ring-secondary-500",
+      "bg-secondary-900 text-white border border-secondary-900  focus:ring-secondary-500",
     tertiary:
-      "bg-white text-primary-base border border-primary-base hover:bg-primary-50 hover:text-primary-600 focus:ring-primary-500",
+      "bg-white text-primary-base border border-primary-base focus:ring-primary-500",
     destructive:
-      "bg-white text-red-500 border border-red-500 hover:bg-red-50 hover:text-red-600 focus:ring-red-500",
+      "bg-white text-red-500 border border-red-500  focus:ring-red-500",
   };
 
   return `${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]}`

@@ -10,7 +10,7 @@ export default function SidebarFooter() {
       <Button
         variant="primary"
         className={`
-            w-full !text-sm flex items-center gap-2  !col-span-2
+            w-full  flex items-center gap-2  !col-span-2
             transition-all duration-300 ease-in-out
           `}
         onClick={() => alert("¡Hola!")}
