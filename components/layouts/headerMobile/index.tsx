@@ -31,18 +31,17 @@ export default function HeaderMobile({
     >
       <div className="flex flex-row items-center justify-between gap-4 w-full p-4  bg-white grow-0">
         <LogoColor className="w-28 h-28" id="HeaderMobile" />
-        <div className="flex flex-row items-center gap-4">
-          <Button
-            className="w-fit !text-lg flex items-center justify-center gap-2 h-fit text-primary-base shadow-none hover:opacity-60 cursor-pointer bg-transparent transition-all duration-300 ease-in-out !border-none hover:!border-none"
-            onClick={handleMenuSwitch}
-          >
-            {isOpen ? (
-              <CloseIcon className="w-12 h-12 text-gray-800" />
-            ) : (
-              <MenuIcon className="w-12 h-12 text-primary-base" />
-            )}
-          </Button>
-          <Button
+        <Button
+          className="!w-full !text-lg flex items-center justify-center gap-2 h-fit text-primary-base shadow-none hover:opacity-60 cursor-pointer bg-transparent transition-all duration-300 ease-in-out !border-none hover:!border-none"
+          onClick={handleMenuSwitch}
+        >
+          {isOpen ? (
+            <CloseIcon className="w-12 h-12 text-gray-800" />
+          ) : (
+            <MenuIcon className="w-12 h-12 text-primary-base" />
+          )}
+        </Button>
+        {/* <Button
             className={`
     w-full !text-lg flex items-center justify-center gap-2
     transition-all duration-300 ease-in-out
@@ -60,8 +59,7 @@ export default function HeaderMobile({
         font-semibold shadow-md"
               ></span>
             </div>
-          </Button>
-        </div>
+          </Button> */}
       </div>
 
       <div
@@ -73,7 +71,7 @@ export default function HeaderMobile({
         <HeaderMobileNav handleCloseMenu={handleCloseMenu} />
         <div className="w-full flex flex-col items-center gap-4">
           <HeaderMobileUser />
-          <LogoutButton collapsed={false} />
+          <LogoutButton />
         </div>
       </div>
     </header>
