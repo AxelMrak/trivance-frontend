@@ -1,5 +1,11 @@
 "use client";
-import React, { useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useDialog } from "@/context/ModalContext";
 import toast from "react-hot-toast";
 import Button from "@/components/ui/Button";
@@ -9,99 +15,115 @@ import { generateCalendarLinks } from "@/utils/functions";
 import Link from "next/link";
 import { Service } from "@/types/Service";
 import AppointmentForm from "@/components/features/forms/AppointmentForm";
-import AppointmentDetailsForm from "@/components/features/forms/AppointmentDetailsForm";
 import { useUser } from "@/context/UserContext";
+import Pagination from "@/components/ui/Pagination";
 
 interface AppointmentsContainerProps {
   initialAppointments: Appointment[];
-  initialServices: Service[];
 }
 
 export default function AppointmentsContainer({
   initialAppointments,
-  initialServices,
 }: AppointmentsContainerProps) {
-  const [appointments, setAppointments] =
-    useState<Appointment[]>(initialAppointments);
+  const [appointments, setAppointments] = useState<Appointment[]>(
+    initialAppointments ?? [],
+  );
   const { openDialog, closeDialog } = useDialog();
   const { user } = useUser();
+  const openedIdRef = useRef<string | null>(null);
+  const [page, setPage] = useState<number>(1);
+  const pageSize = 8;
+  const services = useMemo(() => {
+    const map = new Map<string, Service>();
+    for (const appt of appointments) {
+      if (appt.service) {
+        map.set(appt.service.id, appt.service);
+      }
+    }
+    return Array.from(map.values());
+  }, [appointments]);
 
-  const onAppointmentCreated = (newAppointment: Appointment) => {
-    const service = initialServices.find(
-      (s) => s.id === newAppointment.service_id,
-    );
+  const onAppointmentCreated = useCallback(
+    (newAppointment: Appointment) => {
+      const fullAppointment = {
+        ...newAppointment,
+        user: user?.user,
+      };
 
-    const fullAppointment = {
-      ...newAppointment,
-      user: user?.user,
-      service,
-    };
+      setAppointments((prev) => [...prev, fullAppointment]);
+      closeDialog();
+    },
+    [user, closeDialog],
+  );
 
-    setAppointments((prev) => [...prev, fullAppointment]);
-    closeDialog();
-  };
+  const onAppointmentUpdated = useCallback(
+    (updatedAppointment: Appointment) => {
+      const serviceId =
+        updatedAppointment.service?.id || updatedAppointment.service_id;
+      const service = serviceId
+        ? services.find((s) => s.id === serviceId)
+        : undefined;
 
-  const onAppointmentUpdated = (updatedAppointment: Appointment) => {
-    const service = initialServices.find(
-      (s) => s.id === updatedAppointment.service_id,
-    );
+      setAppointments((prev) =>
+        prev.map((apt) =>
+          apt.id === updatedAppointment.id
+            ? { ...apt, ...updatedAppointment, service }
+            : apt,
+        ),
+      );
+      closeDialog();
+    },
+    [services, closeDialog],
+  );
 
-    setAppointments((prev) =>
-      prev.map((apt) =>
-        apt.id === updatedAppointment.id
-          ? { ...apt, ...updatedAppointment, service }
-          : apt,
-      ),
-    );
-    closeDialog();
-  };
-
-  const handleDeleteAppointment = async (id: string): Promise<void> => {
-    const deletePromise = fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/appointments/delete/${id}`,
-      {
-        method: "DELETE",
-        credentials: "include",
-      },
+  const handleDeleteAppointment = useCallback(
+    async (id: string): Promise<void> => {
+      const deletePromise = fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/appointments/delete/${id}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        },
     ).then(async (response) => {
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || "Error al eliminar el turno");
+        try {
+          const json = await response.json();
+          throw new Error(json?.message || "Error al eliminar el turno");
+        } catch {
+          const errorText = await response.text();
+          throw new Error(errorText || "Error al eliminar el turno");
+        }
       }
 
-      setAppointments((prev) => prev.filter((client) => client.id !== id));
-      closeDialog();
-      return "Turno eliminado correctamente";
-    });
+        setAppointments((prev) => prev.filter((client) => client.id !== id));
+        closeDialog();
+        return "Turno eliminado correctamente";
+      });
 
-    toast.promise(deletePromise, {
-      loading: "Eliminando turno...",
-      success: (message) => message,
-      error: (error: unknown) => {
-        if (error instanceof Error) {
-          return error.message || "Error al eliminar el turno";
-        }
-        console.error(error);
-        return "Error al eliminar el turno";
-      },
-    });
-  };
+      toast.promise(deletePromise, {
+        loading: "Eliminando turno...",
+        success: (message) => message,
+        error: (error: unknown) => {
+          if (error instanceof Error) {
+            return error.message || "Error al eliminar el turno";
+          }
+          console.error(error);
+          return "Error al eliminar el turno";
+        },
+      });
+    },
+    [closeDialog],
+  );
 
-  const openEditDialog = (appointment: Appointment) => {
-    openDialog(
-      <AppointmentDetailsForm
-        initialAppointment={appointment}
-        services={initialServices}
-        onAppointmentUpdated={onAppointmentUpdated}
-        onDelete={handleDeleteAppointment}
-        onClose={closeDialog}
-      />,
-    );
-  };
+  const openEditDialog = useCallback((appointment: Appointment) => {
+    if (typeof window !== "undefined") {
+      window.location.href = `/dashboard/appointments/${appointment.id}`;
+    }
+  }, []);
 
   const openAddToCalendarDialog = (appointment: Appointment) => {
     const links = generateCalendarLinks({
-      title: `Turno con ${appointment.user?.name}`,
+      title: `Turno con ${appointment.client?.user?.name || appointment.user?.name}`,
       description: appointment.description || "Sin descripción",
       location: appointment.service?.location || "Sin ubicación",
       start: new Date(appointment.start_date),
@@ -128,6 +150,8 @@ export default function AppointmentsContainer({
     );
   };
 
+  // Details flow moved to dedicated page
+
   return (
     <div className="w-full flex flex-col items-start justify-between gap-4">
       <div className="w-full flex items-center justify-between gap-4">
@@ -140,7 +164,7 @@ export default function AppointmentsContainer({
           onClick={() =>
             openDialog(
               <AppointmentForm
-                services={initialServices}
+                services={services}
                 appointments={appointments}
                 onAppointmentCreated={onAppointmentCreated}
               />,
@@ -153,7 +177,9 @@ export default function AppointmentsContainer({
 
       <section className="w-full grid grid-cols-1 md:grid-cols-2  gap-4">
         {appointments.length > 0 ? (
-          appointments.map((appointment: Appointment) => (
+          appointments
+            .slice((page - 1) * pageSize, page * pageSize)
+            .map((appointment: Appointment) => (
             <AppointmentCard
               key={appointment.id}
               appointment={appointment}
@@ -170,6 +196,7 @@ export default function AppointmentsContainer({
           </div>
         )}
       </section>
+      <Pagination total={appointments.length} page={page} pageSize={pageSize} onPageChange={setPage} />
     </div>
   );
 }
