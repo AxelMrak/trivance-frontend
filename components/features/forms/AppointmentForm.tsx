@@ -257,13 +257,6 @@ export default function AppointmentForm({
 
         const payment = await createPaymentLink(appointment.id);
         window.open(payment.paymentLink, "_blank");
-        // Navegar a la página de estado para mejorar el flujo
-        if ((payment as any).orderId) {
-          router.push(`/dashboard/payment/success?order_id=${(payment as any).orderId}`);
-        } else {
-          router.refresh();
-        }
-        // Start polling for confirmation
         setIsPolling(true);
         let tries = 0;
         const maxTries = 60; // ~3-5 mins depending on interval
@@ -276,7 +269,7 @@ export default function AppointmentForm({
               setIsPolling(false);
               setAwaitingPayment(false);
               setReservedAppt(appt);
-              onAppointmentCreated(appt);
+              onAppointmentCreated();
             }
             if (tries >= maxTries) {
               clearInterval(interval);
@@ -555,10 +548,6 @@ export default function AppointmentForm({
                           throw new Error("No se pudo generar el link de pago");
                         const data = await res.json();
                         window.open(data.paymentLink, "_blank");
-                        // Mejorar el flujo: navegar al estado del pago
-                        if (data.orderId) {
-                          router.push(`/dashboard/payment/success?order_id=${data.orderId}`);
-                        }
                       } catch (e) {
                         setPaymentError((e as Error).message);
                       }

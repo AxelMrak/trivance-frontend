@@ -10,6 +10,7 @@ export async function fetchWithToken(
     method: method,
     headers: {
       "Content-Type": "application/json",
+
       Authorization: `Bearer ${token}`,
     },
     cache: "no-store",

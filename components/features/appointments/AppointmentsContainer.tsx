@@ -52,7 +52,6 @@ export default function AppointmentsContainer({
           appointments={[] as any}
           onAppointmentCreated={() => {
             closeDialog();
-            router.refresh();
           }}
         />,
       );
