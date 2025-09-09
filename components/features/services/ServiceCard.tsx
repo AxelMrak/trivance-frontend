@@ -17,8 +17,10 @@ export default function ServiceCard({
   return (
     <article className="w-full flex flex-col items-start justify-between gap-4 p-4 bg-white border border-gray-300 rounded-md">
       <header className="w-full flex items-center justify-between gap-2">
-        <h2 className="text-xl font-semibold text-gray-800">{service.name}</h2>
-        <div className="flex items-center justify-center gap-2">
+        <h2 className="text-xl font-semibold text-start text-gray-800">
+          {service.name}
+        </h2>
+        <div className="flex items-center justify-end gap-2 flex-wrap">
           <span className="text-lg font-normal text-gray-500">
             {formatPrice(service.price)} ARS
           </span>
@@ -29,7 +31,9 @@ export default function ServiceCard({
             </span>
           </div>
           {service.requires_deposit && (
-            <span className="text-xs font-semibold text-blue-700 bg-blue-100 border border-blue-300 rounded px-2 py-1">Requiere seña</span>
+            <span className="text-xs font-semibold text-blue-700 bg-blue-100 border border-blue-300 rounded px-2 py-1">
+              Requiere seña
+            </span>
           )}
         </div>
       </header>

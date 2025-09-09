@@ -16,6 +16,7 @@ import {
 } from "@/lib/api/services";
 import SearchInput from "@/components/ui/SearchInput";
 import Pagination from "@/components/ui/Pagination";
+import NotFoundMsg from "@/components/ui/NotFoundMsg";
 
 interface ServicesContainerProps {
   initialServices: Service[];
@@ -151,12 +152,7 @@ export default function ServicesContainer({
               />
             ))
         ) : (
-          <div className="w-full flex items-center justify-start">
-            <p className="text-2xl font-normal text-gray-900 text-start">
-              No se encontraron servicios. Podés crear uno nuevo haciendo click
-              en el botón de arriba.
-            </p>
-          </div>
+          <NotFoundMsg message="No se encontraron servicios." />
         )}
       </section>
       <Pagination

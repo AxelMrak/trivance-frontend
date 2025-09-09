@@ -192,7 +192,7 @@ const Calendar: React.FC<CalendarProps> = ({
                 {day.appointmentCount > 0 && (
                   <span
                     className={`
-                    absolute top-1 right-1 w-6 h-6 text-sm rounded-full flex items-center justify-center
+                    absolute top-1 right-1 w-4 h-4 md:w-6 md:h-6 text-xs font-semibold md:text-sm rounded-full flex items-center justify-center
                     ${day.isSelected ? "bg-white text-blue-500" : "bg-blue-500 text-white"}
                   `}
                   >

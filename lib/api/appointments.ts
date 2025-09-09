@@ -79,7 +79,7 @@ export async function getAppointment(id: string): Promise<Appointment> {
 
 export async function createPaymentLink(
   id: string,
-): Promise<{ paymentLink: string }> {
+): Promise<{ paymentLink: string; orderId?: string; paymentDetails?: any }> {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/appointments/payment/${id}/link`,
     { method: "POST", credentials: "include" },
@@ -90,4 +90,3 @@ export async function createPaymentLink(
   }
   return data;
 }
-

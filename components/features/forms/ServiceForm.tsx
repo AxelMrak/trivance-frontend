@@ -105,23 +105,27 @@ export default function ServiceForm({
         <label className="block text-xl font-normal text-gray-900 ">
           Duración del servicio
         </label>
-      <Controller
-        name="duration"
-        control={control}
-        render={({ field }) => <DurationPicker {...field} />}
-      />
-      {errors.duration && (
-        <p className="mt-1 text-sm text-red-600">{errors.duration.message}</p>
-      )}
-    </div>
+        <Controller
+          name="duration"
+          control={control}
+          render={({ field }) => <DurationPicker {...field} />}
+        />
+        {errors.duration && (
+          <p className="mt-1 text-sm text-red-600">{errors.duration.message}</p>
+        )}
+      </div>
 
       <div className="w-full flex items-center gap-2">
         <Controller
           name="requires_deposit"
           control={control}
           render={({ field }) => (
-            <label className="inline-flex items-center gap-2">
-              <input type="checkbox" checked={!!field.value} onChange={(e) => field.onChange(e.target.checked)} />
+            <label className="inline-flex items-center gap-2 text-xl">
+              <input
+                type="checkbox"
+                checked={!!field.value}
+                onChange={(e) => field.onChange(e.target.checked)}
+              />
               <span className="text-gray-800">Requiere seña</span>
             </label>
           )}
@@ -130,6 +134,16 @@ export default function ServiceForm({
 
       <div className="w-full grid grid-cols-2 items-center gap-4 ">
         <Button
+          variant="tertiary"
+          onClick={reset}
+          disabled={Object.keys(dirtyFields).length === 0 || isSubmitting}
+          type="button"
+          className="w-full disable:opacity-50 disabled:text-gray-500 disabled:cursor-not-allowed whitespace-nowrap"
+        >
+          <DiscardIcon className="w-4 h-4 mr-2" />
+          Deshacer cambios
+        </Button>
+        <Button
           variant="primary"
           type="submit"
           disabled={Object.keys(errors).length > 0 || isSubmitting}
@@ -137,14 +151,6 @@ export default function ServiceForm({
         >
           <SaveIcon className="w-4 h-4 mr-2" />
           {initialService ? "Guardar cambios" : "Crear servicio"}
-        </Button>
-        <Button
-          variant="tertiary"
-          onClick={onClose}
-          className="w-full disable:opacity-50 disabled:text-gray-500 disabled:cursor-not-allowed"
-        >
-          <DiscardIcon className="w-4 h-4 mr-2" />
-          Cancelar
         </Button>
       </div>
     </form>

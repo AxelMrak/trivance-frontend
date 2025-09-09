@@ -24,7 +24,11 @@ import { useEffect } from "react";
 import { MONTHS } from "@/utils/const";
 import { useRouter } from "next/navigation";
 import { formatInterval } from "@/utils/format";
-import { createAppointment, createPaymentLink, getAppointment } from "@/lib/api/appointments";
+import {
+  createAppointment,
+  createPaymentLink,
+  getAppointment,
+} from "@/lib/api/appointments";
 
 const Card = ({
   children,
@@ -211,7 +215,7 @@ export default function AppointmentForm({
     };
     const role = user?.user?.role ?? UserRole.CLIENT;
     if (role >= UserRole.STAFF && selectedClientId) {
-      payload.client_id = selectedClientId; // backend acepta clients.id o users.id
+      payload.client_id = selectedClientId;
     }
     await toast.promise(
       createAppointment(payload).then((data) => {
@@ -253,7 +257,12 @@ export default function AppointmentForm({
 
         const payment = await createPaymentLink(appointment.id);
         window.open(payment.paymentLink, "_blank");
-        router.refresh();
+        // Navegar a la página de estado para mejorar el flujo
+        if ((payment as any).orderId) {
+          router.push(`/dashboard/payment/success?order_id=${(payment as any).orderId}`);
+        } else {
+          router.refresh();
+        }
         // Start polling for confirmation
         setIsPolling(true);
         let tries = 0;
@@ -546,6 +555,10 @@ export default function AppointmentForm({
                           throw new Error("No se pudo generar el link de pago");
                         const data = await res.json();
                         window.open(data.paymentLink, "_blank");
+                        // Mejorar el flujo: navegar al estado del pago
+                        if (data.orderId) {
+                          router.push(`/dashboard/payment/success?order_id=${data.orderId}`);
+                        }
                       } catch (e) {
                         setPaymentError((e as Error).message);
                       }
