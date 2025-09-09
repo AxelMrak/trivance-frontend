@@ -3,23 +3,25 @@
 import { useMemo, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import SaveIcon from "@/components/icons/SaveIcon";
 import DiscardIcon from "@/components/icons/DiscardIcon";
-import { useDialog } from "@/context/ModalContext";
+// no dialog usage here; handled by container
 
 import { ClientFormValues, clientSchema } from "@/lib/validation/client.schema";
 import { Client } from "@/types/Client";
 
-type Props = { initialClient?: Client };
+type Props = {
+  initialClient?: Client;
+  onSubmit: (data: ClientFormValues) => Promise<void>;
+  onClose: () => void;
+};
 
-export default function ClientForm({ initialClient }: Props) {
+export default function ClientForm({ initialClient, onSubmit, onClose }: Props) {
   const router = useRouter();
-  const { closeDialog } = useDialog();
 
   const defaultValues = useMemo<ClientFormValues>(
     () => ({
@@ -46,52 +48,8 @@ export default function ClientForm({ initialClient }: Props) {
     reset(defaultValues);
   }, [defaultValues, reset]);
 
-  const onSubmit = async (data: ClientFormValues) => {
-    const base = process.env.NEXT_PUBLIC_API_URL ?? "";
-    const endpoint = initialClient
-      ? `/clients/update/${initialClient.id}`
-      : "/clients/create";
-    const method = initialClient ? "PUT" : "POST";
-    const url = `${base}${endpoint}`;
-
-    await toast.promise(
-      (async () => {
-        const res = await fetch(url, {
-          method,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-          credentials: "include",
-        });
-
-        if (!res.ok) {
-          let message = "Error al guardar el cliente";
-          try {
-            const json = await res.json();
-            message = json?.message || message;
-          } catch {
-            const text = await res.text();
-            message = text || message;
-          }
-          throw new Error(message);
-        }
-
-        reset();
-        closeDialog();
-
-        router.refresh();
-      })(),
-      {
-        loading: initialClient
-          ? "Actualizando cliente..."
-          : "Creando cliente...",
-        success: () =>
-          initialClient
-            ? "Cliente actualizado correctamente"
-            : "Cliente creado correctamente",
-        error: (e) =>
-          (e as Error).message || "Hubo un error al guardar el cliente",
-      },
-    );
+  const handleFormSubmit = async (data: ClientFormValues) => {
+    await onSubmit(data);
   };
 
   const fields: Array<{
@@ -133,7 +91,7 @@ export default function ClientForm({ initialClient }: Props) {
   return (
     <form
       noValidate
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(handleFormSubmit)}
       className="w-full flex flex-col items-start justify-start gap-4"
     >
       <h2 className="text-2xl font-normal mb-2">

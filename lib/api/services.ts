@@ -6,7 +6,7 @@ export async function getServices(): Promise<Service[]> {
     {
       method: "GET",
       cache: "no-store",
-    }
+    },
   );
   const data = await res.json();
 
@@ -15,7 +15,7 @@ export async function getServices(): Promise<Service[]> {
   }
 
   return data;
-};
+}
 
 export async function getService(id: string): Promise<Service> {
   const res = await fetch(
@@ -23,7 +23,7 @@ export async function getService(id: string): Promise<Service> {
     {
       method: "GET",
       cache: "no-store",
-    }
+    },
   );
   const data = await res.json();
   if (!res.ok) {
@@ -32,14 +32,17 @@ export async function getService(id: string): Promise<Service> {
   return data;
 }
 
-export async function createService(payload: CreateServicePayload): Promise<Service> {
+export async function createService(
+  payload: CreateServicePayload,
+): Promise<Service> {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/services/create`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify(payload),
-    }
+    },
   );
   const data = await res.json();
   if (!res.ok) {
@@ -48,14 +51,18 @@ export async function createService(payload: CreateServicePayload): Promise<Serv
   return data;
 }
 
-export async function updateService(payload: Partial<CreateServicePayload>, id: string): Promise<Service> {
+export async function updateService(
+  payload: Partial<CreateServicePayload>,
+  id: string,
+): Promise<Service> {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/services/update/${id}`,
     {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify(payload),
-    }
+    },
   );
   const data = await res.json();
   if (!res.ok) {
@@ -64,17 +71,35 @@ export async function updateService(payload: Partial<CreateServicePayload>, id: 
   return data;
 }
 
-export async function deleteService(id: string): Promise<{ message: string, id: string }> {
+export async function deleteService(
+  id: string,
+): Promise<{ message: string; id: string }> {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/services/delete/${id}`,
     {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
-    }
+      credentials: "include",
+    },
   );
-  const data = await res.json();
-  if (!res.ok) {
-    throw new Error(data.message || "Error al eliminar el servicio");
+  const contentType = res.headers.get("content-type") || "";
+  // Handle 204 No Content or empty body
+  if (res.status === 204 || !contentType.includes("application/json")) {
+    if (!res.ok) {
+      throw new Error("Error al eliminar el servicio");
+    }
+    return { message: "Servicio eliminado correctamente", id };
   }
-  return data;
+  const text = await res.text();
+  let data: any = null;
+  try {
+    data = text ? JSON.parse(text) : null;
+  } catch {
+    data = null;
+  }
+  if (!res.ok) {
+    const msg = (data && data.message) || text || "Error al eliminar el servicio";
+    throw new Error(msg);
+  }
+  return data ?? { message: "Servicio eliminado correctamente", id };
 }

@@ -1,4 +1,3 @@
-import SearchInput from "@/components/ui/SearchInput";
 import ServicesContainer from "./ServicesContainer";
 import { Suspense } from "react";
 import { ServicesContainerSkeleton } from "@/components/ui/skeletons/ServicesContainerSkeleton";
@@ -16,10 +15,6 @@ export default async function Services() {
 
     return (
       <div className="w-full min-h-[80svh] flex flex-col items-start justify-start gap-4 p-4 text-center bg-white">
-        <SearchInput
-          placeholder="Buscar servicio"
-          className="w-full text-2xl"
-        />
         <Suspense fallback={<ServicesContainerSkeleton />}>
           <ServicesContainer
             initialServices={Array.isArray(services) ? services : []}

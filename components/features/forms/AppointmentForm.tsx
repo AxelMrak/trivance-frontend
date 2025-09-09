@@ -24,6 +24,7 @@ import { useEffect } from "react";
 import { MONTHS } from "@/utils/const";
 import { useRouter } from "next/navigation";
 import { formatInterval } from "@/utils/format";
+import { createAppointment, createPaymentLink, getAppointment } from "@/lib/api/appointments";
 
 const Card = ({
   children,
@@ -213,18 +214,7 @@ export default function AppointmentForm({
       payload.client_id = selectedClientId; // backend acepta clients.id o users.id
     }
     await toast.promise(
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/appointments/create`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(payload),
-      }).then(async (res) => {
-        const data = await res.json();
-        if (!res.ok) {
-          throw new Error(data?.message || "No se pudo reservar el turno");
-        }
+      createAppointment(payload).then((data) => {
         setReservedAppt(data);
         const requiresDeposit = Boolean(data?.service?.requires_deposit);
         setAwaitingPayment(requiresDeposit);
@@ -257,43 +247,11 @@ export default function AppointmentForm({
         if (role >= UserRole.STAFF && selectedClientId) {
           payload.client_id = selectedClientId;
         }
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/appointments/create`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include",
-            body: JSON.stringify(payload),
-          },
-        );
-        const appointment = await res.json();
-        if (!res.ok) {
-          throw new Error(
-            appointment?.message || "No se pudo reservar el turno",
-          );
-        }
+        const appointment = await createAppointment(payload);
         setReservedAppt(appointment);
         setAwaitingPayment(true);
 
-        const paymentRes = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/appointments/payment/${appointment.id}/link`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include",
-          },
-        );
-
-        if (!paymentRes.ok) {
-          throw new Error("No se pudo iniciar el proceso de pago");
-        }
-
-        const payment = await paymentRes.json();
-
+        const payment = await createPaymentLink(appointment.id);
         window.open(payment.paymentLink, "_blank");
         router.refresh();
         // Start polling for confirmation
@@ -303,13 +261,7 @@ export default function AppointmentForm({
         const interval = setInterval(async () => {
           tries++;
           try {
-            const r = await fetch(
-              `${process.env.NEXT_PUBLIC_API_URL}/appointments/get/${appointment.id}`,
-              {
-                credentials: "include",
-              },
-            );
-            const appt = await r.json();
+            const appt = await getAppointment(appointment.id);
             if (appt?.status === "confirmed") {
               clearInterval(interval);
               setIsPolling(false);

@@ -1,6 +1,4 @@
 "use client";
-
-import { z } from "zod";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo, useState } from "react";
@@ -15,25 +13,10 @@ import { useUser } from "@/context/UserContext";
 import { UserRole } from "@/types/User";
 import { generateCalendarLinks } from "@/utils/functions";
 import Link from "next/link";
+import { appointmentUpdateSchema, type AppointmentUpdateFormValues } from "@/lib/validation/appointment.schema";
+import { deleteAppointment, updateAppointment, createPaymentLink } from "@/lib/api/appointments";
 
-const appointmentSchema = z.object({
-  service_id: z.string().min(1, "El servicio es requerido"),
-  start_date: z
-    .string()
-    .min(1, "La fecha es requerida")
-    .refine(
-      (value) => {
-        const date = new Date(value);
-        const hours = date.getHours();
-        return hours >= 9 && hours <= 17;
-      },
-      { message: "La hora debe estar entre 09:00 y 17:00" },
-    ),
-  description: z.string().optional(),
-  status: z.enum(["pending", "confirmed", "cancelled"]),
-});
-
-type AppointmentFormValues = z.infer<typeof appointmentSchema>;
+type AppointmentFormValues = AppointmentUpdateFormValues;
 
 export default function AppointmentDetailsView({
   initialAppointment,
@@ -80,7 +63,7 @@ export default function AppointmentDetailsView({
     reset,
     formState: { errors, isSubmitting },
   } = useForm<AppointmentFormValues>({
-    resolver: zodResolver(appointmentSchema),
+    resolver: zodResolver(appointmentUpdateSchema),
     defaultValues,
   });
 
@@ -92,25 +75,7 @@ export default function AppointmentDetailsView({
     if (canEditDescription) payload.description = data.description;
     if (canEditStatus) payload.status = data.status;
 
-    const updatePromise = fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/appointments/update/${appointment.id}`,
-      {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-        credentials: "include",
-      },
-    ).then(async (response) => {
-      if (!response.ok) {
-        try {
-          const json = await response.json();
-          throw new Error(json?.message || "Error al actualizar el turno");
-        } catch {
-          const text = await response.text();
-          throw new Error(text || "Error al actualizar el turno");
-        }
-      }
-      const updated = await response.json();
+    const updatePromise = updateAppointment(appointment.id, payload).then((updated) => {
       setAppointment(updated);
       reset({
         service_id: updated.service?.id || updated.service_id || "",
@@ -138,21 +103,7 @@ export default function AppointmentDetailsView({
     if (!canDelete) return;
     const confirmed = window.confirm("¿Seguro que deseas eliminar este turno?");
     if (!confirmed) return;
-    const deletePromise = fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/appointments/delete/${appointment.id}`,
-      { method: "DELETE", credentials: "include" },
-    ).then(async (response) => {
-      if (!response.ok) {
-        try {
-          const json = await response.json();
-          throw new Error(json?.message || "Error al eliminar el turno");
-        } catch {
-          const text = await response.text();
-          throw new Error(text || "Error al eliminar el turno");
-        }
-      }
-      return "Turno eliminado correctamente";
-    });
+    const deletePromise = deleteAppointment(appointment.id).then(() => "Turno eliminado correctamente");
 
     toast.promise(deletePromise, {
       loading: "Eliminando turno...",
@@ -181,22 +132,7 @@ export default function AppointmentDetailsView({
   }, [appointment]);
 
   const generatePaymentLink = async () => {
-    const payPromise = fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/appointments/payment/${appointment.id}/link/`,
-      { method: "POST", credentials: "include" },
-    ).then(async (res) => {
-      if (!res.ok) {
-        try {
-          const json = await res.json();
-          throw new Error(
-            json?.message || "No se pudo generar el link de pago",
-          );
-        } catch {
-          const txt = await res.text();
-          throw new Error(txt || "No se pudo generar el link de pago");
-        }
-      }
-      const data = await res.json();
+    const payPromise = createPaymentLink(appointment.id).then((data) => {
       const url = data.paymentLink as string;
       if (url) window.open(url, "_blank");
       return "Link de pago generado";
