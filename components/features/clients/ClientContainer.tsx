@@ -11,6 +11,8 @@ import ClientForm from "@/components/features/forms/ClientForm";
 import Pagination from "@/components/ui/Pagination";
 import SearchInput from "@/components/ui/SearchInput";
 import NotFoundMsg from "@/components/ui/NotFoundMsg";
+import { createClient, deleteClient, updateClient } from "@/lib/api/clients";
+import type { ClientFormValues } from "@/lib/validation/client.schema";
 
 interface ClientsContainerProps {
   initialClients: Client[];
@@ -26,23 +28,7 @@ export default function ClientsContainer({
   const { openDialog, closeDialog } = useDialog();
 
   const handleDeleteClient = async (id: string): Promise<void> => {
-    const deletePromise = fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/clients/delete/${id}`,
-      {
-        method: "DELETE",
-        credentials: "include",
-      },
-    ).then(async (response) => {
-      if (!response.ok) {
-        try {
-          const json = await response.json();
-          throw new Error(json?.message || "Error al eliminar el cliente");
-        } catch {
-          const errorText = await response.text();
-          throw new Error(errorText || "Error al eliminar el cliente");
-        }
-      }
-
+    const deletePromise = deleteClient(id).then(() => {
       setClients((prev) => prev.filter((client) => client.id !== id));
       closeDialog();
       return "Cliente eliminado correctamente";
@@ -71,8 +57,40 @@ export default function ClientsContainer({
     );
   };
 
+  const handleCreateClient = async (data: ClientFormValues) => {
+    const promise = createClient(data).then((created) => {
+      setClients((prev) => [created, ...prev]);
+      closeDialog();
+      return "Cliente creado correctamente";
+    });
+    toast.promise(promise, {
+      loading: "Creando cliente...",
+      success: (m) => m,
+      error: (e) => (e as Error).message || "Error al crear el cliente",
+    });
+  };
+
+  const handleUpdateClient = async (client: Client, data: ClientFormValues) => {
+    const promise = updateClient(client.id, data).then((updated) => {
+      setClients((prev) => prev.map((c) => (c.id === updated.id ? updated : c)));
+      closeDialog();
+      return "Cliente actualizado correctamente";
+    });
+    toast.promise(promise, {
+      loading: "Actualizando cliente...",
+      success: (m) => m,
+      error: (e) => (e as Error).message || "Error al actualizar el cliente",
+    });
+  };
+
   const openEditDialog = (client: Client) => {
-    openDialog(<ClientForm initialClient={client} />);
+    openDialog(
+      <ClientForm
+        initialClient={client}
+        onSubmit={(values) => handleUpdateClient(client, values)}
+        onClose={closeDialog}
+      />,
+    );
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -109,7 +127,11 @@ export default function ClientsContainer({
         <Button
           variant="primary"
           className="w-full md:w-auto !text-md whitespace-nowrap"
-          onClick={() => openDialog(<ClientForm />)}
+          onClick={() =>
+            openDialog(
+              <ClientForm onSubmit={handleCreateClient} onClose={closeDialog} />,
+            )
+          }
         >
           Crear cliente +
         </Button>
