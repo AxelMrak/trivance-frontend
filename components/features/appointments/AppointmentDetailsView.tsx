@@ -13,6 +13,7 @@ import { useUser } from "@/context/UserContext";
 import { UserRole } from "@/types/User";
 import { generateCalendarLinks } from "@/utils/functions";
 import Link from "next/link";
+import { CheckIcon } from "@/components/icons/CheckIcon";
 import {
   appointmentUpdateSchema,
   type AppointmentUpdateFormValues,
@@ -389,25 +390,41 @@ export default function AppointmentDetailsView({
             </Button>
           </div>
 
-          {appointment.service?.requires_deposit && (
-            <div className="p-4 border border-gray-200 rounded-md bg-gray-50">
-              <h3 className="font-semibold mb-2">Pago</h3>
-              <p className="text-sm text-gray-600 mb-3">
-                {role >= UserRole.STAFF
-                  ? "Este servicio requiere seña. Generá un link de pago y compártelo con el cliente."
-                  : "Este servicio requiere seña. Realiza el pago para confirmar tu turno."}
-              </p>
-              <Button
-                variant="secondary"
-                onClick={generatePaymentLink}
-                className="w-full"
-              >
-                {role >= UserRole.STAFF
-                  ? "Generar link de pago"
-                  : "Pagar ahora"}
-              </Button>
-            </div>
-          )}
+          {appointment.service?.requires_deposit &&
+            appointment.status === "pending" && (
+              <div className="p-4 border border-gray-200 rounded-md bg-yellow-50">
+                <h3 className="font-semibold mb-2 text-yellow-800">Pago Pendiente</h3>
+                <p className="text-sm text-yellow-700 mb-3">
+                  {role >= UserRole.STAFF
+                    ? "Este servicio requiere seña. Generá un link de pago y compártelo con el cliente."
+                    : "Este servicio requiere seña. Realiza el pago para confirmar tu turno."}
+                </p>
+                <Button
+                  variant="secondary"
+                  onClick={generatePaymentLink}
+                  className="w-full bg-yellow-400 hover:bg-yellow-500 text-yellow-900"
+                >
+                  {role >= UserRole.STAFF
+                    ? "Generar link de pago"
+                    : "Pagar ahora"}
+                </Button>
+              </div>
+            )}
+
+          {appointment.service?.requires_deposit &&
+            appointment.status === "confirmed" && (
+              <div className="p-4 border border-green-200 rounded-md bg-green-50">
+                <div className="flex items-center gap-3">
+                  <CheckIcon className="w-8 h-8 text-green-600" />
+                  <div>
+                    <h3 className="font-semibold text-green-800">Seña Pagada</h3>
+                    <p className="text-sm text-green-700">
+                      El turno ha sido confirmado con éxito.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
 
           <div className="p-4 border border-gray-200 rounded-md bg-gray-50">
             <h3 className="font-semibold mb-2">Información del servicio</h3>
