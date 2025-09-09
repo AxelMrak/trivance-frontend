@@ -1,10 +1,10 @@
-import { Client } from '@/types/Client';
-import Button from '@/components/ui/Button';
-import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon';
-import { PhoneIcon } from '@/components/icons/PhoneIcon';
-import { CustomLink } from '@/components/ui/CustomLink';
-import { generateGoogleMapsLink } from '@/utils/functions';
-import { formatDate } from '@/utils/format';
+import { Client } from "@/types/Client";
+import Button from "@/components/ui/Button";
+import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
+import { PhoneIcon } from "@/components/icons/PhoneIcon";
+import { CustomLink } from "@/components/ui/CustomLink";
+import { generateGoogleMapsLink } from "@/utils/functions";
+import { formatDate } from "@/utils/format";
 
 export default function ClientCard({
   client,
@@ -18,37 +18,37 @@ export default function ClientCard({
     <article className="w-full flex flex-col items-start gap-4 p-4 bg-white border border-gray-300 rounded-md">
       <header className="w-full flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <h2 className="text-xl font-semibold text-gray-800 truncate">{client.name || client.email || client.contact_email || 'Sin nombre'}</h2>
+          <h2 className="text-xl font-semibold text-gray-800 truncate">
+            {client.name || client.email || "Sin nombre"}
+          </h2>
         </div>
         <CustomLink
           href={`mailto:${client.email}`}
-          variant={client.email ? 'primary' : 'muted'}
+          variant={client.email ? "primary" : "muted"}
           external
           showExternalIcon
         >
-          {client.email || 'Sin email'}
+          {client.email || "Sin email"}
         </CustomLink>
       </header>
-      <p className="text-sm text-gray-500">Desde {
-        formatDate(client.created_at, false)
-      }</p>
+      <p className="text-sm text-gray-500">
+        Desde {formatDate(client.created_at, false)}
+      </p>
       <CustomLink
-        href={client.address ? generateGoogleMapsLink(client.address) : '#'}
+        href={client.address ? generateGoogleMapsLink(client.address) : "#"}
         variant="muted"
         external
         showExternalIcon
       >
-        {
-          client.address ? (
-            <p className="text-md text-gray-600 truncate">{client.address}</p>
-          ) : (
-            <span className="text-md text-gray-500">Sin dirección</span>
-          )
-        }
+        {client.address ? (
+          <p className="text-md text-gray-600 truncate">{client.address}</p>
+        ) : (
+          <span className="text-md text-gray-500">Sin dirección</span>
+        )}
       </CustomLink>
-        <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+      <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
         <a
-          href={`https://wa.me/${client.phone || client.contact_phone || ''}`}
+          href={`https://wa.me/${client.phone || ""}`}
           target="_blank"
           rel="noopener noreferrer"
           className="w-full"
@@ -62,7 +62,7 @@ export default function ClientCard({
           </Button>
         </a>
 
-        <a href={`tel:${client.phone || client.contact_phone || ''}`} className="w-full">
+        <a href={`tel:${client.phone || ""}`} className="w-full">
           <Button
             variant="tertiary"
             className="w-full text-base font-normal !text-blue-600 border !border-blue-600 flex items-center justify-center gap-2"
