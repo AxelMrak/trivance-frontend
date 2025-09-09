@@ -13,8 +13,15 @@ import { useUser } from "@/context/UserContext";
 import { UserRole } from "@/types/User";
 import { generateCalendarLinks } from "@/utils/functions";
 import Link from "next/link";
-import { appointmentUpdateSchema, type AppointmentUpdateFormValues } from "@/lib/validation/appointment.schema";
-import { deleteAppointment, updateAppointment, createPaymentLink } from "@/lib/api/appointments";
+import {
+  appointmentUpdateSchema,
+  type AppointmentUpdateFormValues,
+} from "@/lib/validation/appointment.schema";
+import {
+  deleteAppointment,
+  updateAppointment,
+  createPaymentLink,
+} from "@/lib/api/appointments";
 
 type AppointmentFormValues = AppointmentUpdateFormValues;
 
@@ -32,7 +39,6 @@ export default function AppointmentDetailsView({
     user?.user?.id && appointment.user?.id === user.user.id,
   );
   const role = user?.user?.role ?? UserRole.CLIENT;
-  console.log(role);
   const isStaffOrHigher = role >= UserRole.STAFF;
   const isManagerOrHigher = role >= UserRole.MANAGER;
   const canEditDate = (isStaffOrHigher && isOwner) || isManagerOrHigher;
@@ -75,21 +81,23 @@ export default function AppointmentDetailsView({
     if (canEditDescription) payload.description = data.description;
     if (canEditStatus) payload.status = data.status;
 
-    const updatePromise = updateAppointment(appointment.id, payload).then((updated) => {
-      setAppointment(updated);
-      reset({
-        service_id: updated.service?.id || updated.service_id || "",
-        start_date: new Date(
-          new Date(updated.start_date).getTime() -
-            new Date().getTimezoneOffset() * 60000,
-        )
-          .toISOString()
-          .slice(0, 16),
-        description: updated.description || "",
-        status: updated.status,
-      });
-      return "Turno actualizado correctamente";
-    });
+    const updatePromise = updateAppointment(appointment.id, payload).then(
+      (updated) => {
+        setAppointment(updated);
+        reset({
+          service_id: updated.service?.id || updated.service_id || "",
+          start_date: new Date(
+            new Date(updated.start_date).getTime() -
+              new Date().getTimezoneOffset() * 60000,
+          )
+            .toISOString()
+            .slice(0, 16),
+          description: updated.description || "",
+          status: updated.status,
+        });
+        return "Turno actualizado correctamente";
+      },
+    );
 
     toast.promise(updatePromise, {
       loading: "Actualizando turno...",
@@ -103,7 +111,9 @@ export default function AppointmentDetailsView({
     if (!canDelete) return;
     const confirmed = window.confirm("¿Seguro que deseas eliminar este turno?");
     if (!confirmed) return;
-    const deletePromise = deleteAppointment(appointment.id).then(() => "Turno eliminado correctamente");
+    const deletePromise = deleteAppointment(appointment.id).then(
+      () => "Turno eliminado correctamente",
+    );
 
     toast.promise(deletePromise, {
       loading: "Eliminando turno...",
@@ -210,10 +220,10 @@ export default function AppointmentDetailsView({
             name="service_id"
             control={control}
             render={({ field }) => (
-              <div className="w-full">
+              <div className="w-full flex flex-col items-start gap-1">
                 <label
                   htmlFor="service_id"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-xl  text-gray-900"
                 >
                   Servicio
                 </label>
@@ -221,7 +231,7 @@ export default function AppointmentDetailsView({
                   {...field}
                   id="service_id"
                   disabled={!canEditService}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-transparent bg-gray-50 select-font-size disabled:opacity-60"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-transparent bg-gray-50 select-font-size disabled:opacity-60 text-xl"
                 >
                   {services.map((service) => (
                     <option key={service.id} value={service.id}>
@@ -271,10 +281,10 @@ export default function AppointmentDetailsView({
             name="status"
             control={control}
             render={({ field }) => (
-              <div className="w-full">
+              <div className="w-full flex flex-col items-start gap-1">
                 <label
                   htmlFor="status"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-xl  text-gray-900"
                 >
                   Estado
                 </label>
@@ -282,7 +292,7 @@ export default function AppointmentDetailsView({
                   {...field}
                   id="status"
                   disabled={!canEditStatus}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-transparent bg-gray-50 select-font-size disabled:opacity-60"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-transparent bg-gray-50 select-font-size disabled:opacity-60 text-xl"
                 >
                   <option value="pending">Pendiente</option>
                   <option value="confirmed">Confirmado</option>
@@ -297,7 +307,7 @@ export default function AppointmentDetailsView({
             )}
           />
 
-          <div className="w-full grid grid-cols-2 gap-4">
+          <div className="w-full flex items-center gap-4">
             {canDelete && (
               <Button
                 variant="destructive"
@@ -312,7 +322,7 @@ export default function AppointmentDetailsView({
               variant="primary"
               type="submit"
               disabled={isSubmitting}
-              className="w-full"
+              className="w-full text-xl"
             >
               Guardar Cambios
             </Button>
@@ -321,7 +331,7 @@ export default function AppointmentDetailsView({
 
         <aside className="md:col-span-1 flex flex-col gap-4">
           <div className="p-4 border border-gray-200 rounded-md bg-gray-50">
-            <h3 className="font-semibold mb-2">Acciones rápidas</h3>
+            <h3 className="font-semibold mb-2">Agregar al calendario</h3>
             <div className="grid grid-cols-3 gap-2">
               {Object.entries(calendarLinks).map(([key, link]) => (
                 <Link

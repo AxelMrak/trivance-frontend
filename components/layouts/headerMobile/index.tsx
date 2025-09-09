@@ -27,12 +27,12 @@ export default function HeaderMobile({
 
   return (
     <header
-      className={`flex flex-col w-full bg-white text-primary-base ${className} ${isOpen ? "h-screen fixed inset-0 z-50" : "h-fit"} `}
+      className={`flex flex-col w-full bg-white text-primary-base ${className} ${isOpen ? "h-screen fixed inset-0 z-50" : "h-fit"} border-b border-gray-300 rounded-b-md shadow-md`}
     >
       <div className="flex flex-row items-center justify-between gap-4 w-full p-4  bg-white grow-0">
-        <LogoColor className="w-28 h-28" id="HeaderMobile" />
-        <Button
-          className="!w-full !text-lg flex items-center justify-center gap-2 h-fit text-primary-base shadow-none hover:opacity-60 cursor-pointer bg-transparent transition-all duration-300 ease-in-out !border-none hover:!border-none"
+        <LogoColor className="w-40 h-40" id="HeaderMobile" />
+        <div
+          className="!w-full !text-lg flex items-center justify-end gap-2 h-fit text-primary-base shadow-none hover:opacity-60 cursor-pointer bg-transparent transition-all duration-300 ease-in-out !border-none hover:!border-none !outline-none !p-0 !focus:ring-0"
           onClick={handleMenuSwitch}
         >
           {isOpen ? (
@@ -40,7 +40,7 @@ export default function HeaderMobile({
           ) : (
             <MenuIcon className="w-12 h-12 text-primary-base" />
           )}
-        </Button>
+        </div>
         {/* <Button
             className={`
     w-full !text-lg flex items-center justify-center gap-2

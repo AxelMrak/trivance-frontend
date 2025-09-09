@@ -38,10 +38,14 @@ export default function AppointmentCard({
       <div className="w-full flex flex-row items-start justify-between gap-4">
         <div className="flex flex-col">
           <h2 className="text-xl font-semibold text-gray-800">
-            Cliente: {appointment.client?.name || appointment.client?.user?.name || appointment.user?.name || 'Sin cliente'}
+            Cliente:{" "}
+            {appointment.client?.name ||
+              appointment.client?.user?.name ||
+              appointment.user?.name ||
+              "Sin cliente"}
           </h2>
-          <p className="text-sm text-gray-600">
-            Creado por: {appointment.user?.name || 'Desconocido'}
+          <p className="text-sm text-gray-600 w-fit">
+            Creado por: {appointment.user?.name || "Desconocido"}
           </p>
         </div>
         <div className="flex items-center justify-center gap-2 text-lg">
@@ -77,25 +81,30 @@ export default function AppointmentCard({
           {appointment.description || "Sin descripción"}
         </p>
       </div>
-      <div className="w-full grid grid-cols-1  md:grid-cols-3 gap-2 text-base">
+      <div className="w-full grid grid-cols-1 lg:grid-cols-3 gap-2 text-base">
         <RoleGuard minRole={UserRole.ADMIN}>
           <Button
             variant="secondary"
-            className="w-full flex items-center justify-center gap-2"
+            className="w-full flex items-center justify-center gap-2 text-xs md:text-base"
           >
             Enviar recordatorio
             <SendIcon className="w-5 h-5" />
           </Button>
           <Button
             variant="tertiary"
-            className="w-full"
+            className="w-full text-xs md:text-base"
             onClick={() => openAddToCalendarDialog(appointment)}
           >
             Agregar al calendario
           </Button>
         </RoleGuard>
-        <Link href={`/dashboard/appointments/${appointment.id}`} className="w-full">
-          <Button variant="primary" className="w-full">Ver detalle</Button>
+        <Link
+          href={`/dashboard/appointments/${appointment.id}`}
+          className="w-full text-xs md:text-base"
+        >
+          <Button variant="primary" className="w-full">
+            Ver detalle
+          </Button>
         </Link>
       </div>
     </article>
