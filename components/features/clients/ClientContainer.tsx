@@ -1,18 +1,16 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Client } from '@/types/Client';
-import ClientCard from '@/components/features/clients/ClientCard';
-import { useDialog } from '@/context/ModalContext';
-import DeleteDialog from '@/components/layouts/dialogs/DeleteDialog';
-import toast from 'react-hot-toast';
-import Button from '@/components/ui/Button';
-import ClientDetails from '@/components/features/forms/ClientDetails';
-import ClientForm from '@/components/features/forms/ClientForm';
-import Pagination from '@/components/ui/Pagination';
-
-
-
+import { useState } from "react";
+import { Client } from "@/types/Client";
+import ClientCard from "@/components/features/clients/ClientCard";
+import { useDialog } from "@/context/ModalContext";
+import DeleteDialog from "@/components/layouts/dialogs/DeleteDialog";
+import toast from "react-hot-toast";
+import Button from "@/components/ui/Button";
+import ClientForm from "@/components/features/forms/ClientForm";
+import Pagination from "@/components/ui/Pagination";
+import SearchInput from "@/components/ui/SearchInput";
+import NotFoundMsg from "@/components/ui/NotFoundMsg";
 
 interface ClientsContainerProps {
   initialClients: Client[];
@@ -23,6 +21,7 @@ export default function ClientsContainer({
 }: ClientsContainerProps) {
   const [clients, setClients] = useState<Client[]>(initialClients ?? []);
   const [page, setPage] = useState<number>(1);
+  const [query, setQuery] = useState<string>("");
   const pageSize = 8;
   const { openDialog, closeDialog } = useDialog();
 
@@ -30,34 +29,34 @@ export default function ClientsContainer({
     const deletePromise = fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/clients/delete/${id}`,
       {
-        method: 'DELETE',
-        credentials: 'include',
-      }
+        method: "DELETE",
+        credentials: "include",
+      },
     ).then(async (response) => {
       if (!response.ok) {
         try {
           const json = await response.json();
-          throw new Error(json?.message || 'Error al eliminar el cliente');
+          throw new Error(json?.message || "Error al eliminar el cliente");
         } catch {
           const errorText = await response.text();
-          throw new Error(errorText || 'Error al eliminar el cliente');
+          throw new Error(errorText || "Error al eliminar el cliente");
         }
       }
 
       setClients((prev) => prev.filter((client) => client.id !== id));
       closeDialog();
-      return 'Cliente eliminado correctamente';
+      return "Cliente eliminado correctamente";
     });
 
     toast.promise(deletePromise, {
-      loading: 'Eliminando cliente...',
+      loading: "Eliminando cliente...",
       success: (message) => message,
       error: (error: unknown) => {
         if (error instanceof Error) {
-          return error.message || 'Error al eliminar el cliente';
+          return error.message || "Error al eliminar el cliente";
         }
         console.error(error);
-        return 'Error al eliminar el cliente';
+        return "Error al eliminar el cliente";
       },
     });
   };
@@ -68,23 +67,48 @@ export default function ClientsContainer({
         data={{ id, title: name || null }}
         onClose={closeDialog}
         onDelete={() => handleDeleteClient(id)}
-      />
+      />,
     );
   };
 
   const openEditDialog = (client: Client) => {
-    openDialog(<ClientForm initialClient={client} />)
+    openDialog(<ClientForm initialClient={client} />);
+  };
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value.toLowerCase();
+    setQuery(query);
+
+    if (query.trim() === "") {
+      setClients(initialClients);
+    } else {
+      const filtered = initialClients.filter((client) => {
+        const nameMatch = client.name
+          ? client.name.toLowerCase().includes(query)
+          : false;
+        const emailMatch = client.email
+          ? client.email.toLowerCase().includes(query)
+          : false;
+        const addressMatch = client.address
+          ? client.address.toLowerCase().includes(query)
+          : false;
+        const phoneMatch = client.phone
+          ? client.phone.toLowerCase().includes(query)
+          : false;
+        return nameMatch || emailMatch || addressMatch || phoneMatch;
+      });
+      setClients(filtered);
+      setPage(1); // Reset to first page on new search
+    }
   };
 
   return (
     <div className="w-full flex flex-col items-start justify-between gap-4">
       <div className="w-full flex items-center justify-between gap-4">
-        <span className="text-2xl font-normal text-gray-500">
-          {clients.length} clientes encontrados
-        </span>
+        <SearchInput value={query} onChange={handleSearch} />
         <Button
           variant="primary"
-          className="w-full md:w-auto !text-2xl font-normal"
+          className="w-full md:w-auto !text-md whitespace-nowrap"
           onClick={() => openDialog(<ClientForm />)}
         >
           Crear cliente +
@@ -95,23 +119,23 @@ export default function ClientsContainer({
           clients
             .slice((page - 1) * pageSize, page * pageSize)
             .map((client) => (
-            <ClientCard
-              key={client.id}
-              client={client}
-              openDeleteDialog={openDeleteDialog}
-              openEditDialog={openEditDialog}
-            />
-          ))
+              <ClientCard
+                key={client.id}
+                client={client}
+                openDeleteDialog={openDeleteDialog}
+                openEditDialog={openEditDialog}
+              />
+            ))
         ) : (
-          <div className="w-full flex items-center justify-start">
-            <p className="text-2xl font-normal text-gray-900 text-start">
-              No se encontraron clientes. Podés crear uno nuevo haciendo click
-              en el botón de arriba.
-            </p>
-          </div>
+          <NotFoundMsg message="No se encontraron clientes." />
         )}
       </section>
-      <Pagination total={clients.length} page={page} pageSize={pageSize} onPageChange={setPage} />
+      <Pagination
+        total={clients.length}
+        page={page}
+        pageSize={pageSize}
+        onPageChange={setPage}
+      />
     </div>
   );
 }

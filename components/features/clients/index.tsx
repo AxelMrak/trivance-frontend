@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import SearchInput from "@/components/ui/SearchInput";
 import ClientsContainer from "./ClientContainer";
 import ClientContainerSkeleton from "@/components/ui/skeletons/ClientContainerSkeleton";
 import { fetchWithToken } from "@/lib/api/fetchWithToken";
@@ -13,10 +12,8 @@ export default async function Clients() {
       throw new Error(message || "Error al obtener clientes");
     }
     const clients = await res.json();
-    console.log(clients);
     return (
       <div className="w-full min-h-[80svh] flex flex-col items-start justify-start gap-4 p-4 text-center bg-white">
-        <SearchInput placeholder="Buscar cliente" className="w-full text-2xl" />
         <Suspense fallback={<ClientContainerSkeleton />}>
           <ClientsContainer
             initialClients={Array.isArray(clients) ? clients : []}

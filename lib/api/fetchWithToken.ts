@@ -1,5 +1,4 @@
 import { cookies } from "next/headers";
-// TODO: REDIRECT THIS TO A PROXY HANDLER TO HANDLE TOKENS ROTATION. THE PROXY IS ALREADY CREATED IN THE API ROUTES BUT WE NEED TO AVOID USE AUTHORIZATION HEADER ON IT. SO WE NEED TO CHANGE TOKENS TO SET ACCESS TOKEN AND REFRESH TOKEN ON COOKIES CALLED "access_token" AND "refresh_token" INSTEAD OF USING AUTHORIZATION HEADER. THIS WAY WE CAN USE THE PROXY TO HANDLE TOKENS ROTATION AND REFRESH THEM WHEN THEY EXPIRE.
 export async function fetchWithToken(
   proxyPath: string,
   method: RequestInit["method"] = "GET",
@@ -13,6 +12,7 @@ export async function fetchWithToken(
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
+    cache: "no-store",
   });
   return res;
 }

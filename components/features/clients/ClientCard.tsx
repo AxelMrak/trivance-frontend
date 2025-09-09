@@ -16,11 +16,14 @@ export default function ClientCard({
 }) {
   return (
     <article className="w-full flex flex-col items-start gap-4 p-4 bg-white border border-gray-300 rounded-md">
-      <header className="w-full flex items-center justify-between gap-2">
+      <header className="w-full flex items-center justify-between gap-2 flex-wrap">
         <div className="flex items-center gap-2">
           <h2 className="text-xl font-semibold text-gray-800 truncate">
             {client.name || client.email || "Sin nombre"}
           </h2>
+          <p className="text-sm text-gray-500">
+            Desde {formatDate(client.created_at, false)}
+          </p>
         </div>
         <CustomLink
           href={`mailto:${client.email}`}
@@ -31,9 +34,7 @@ export default function ClientCard({
           {client.email || "Sin email"}
         </CustomLink>
       </header>
-      <p className="text-sm text-gray-500">
-        Desde {formatDate(client.created_at, false)}
-      </p>
+
       <CustomLink
         href={client.address ? generateGoogleMapsLink(client.address) : "#"}
         variant="muted"
