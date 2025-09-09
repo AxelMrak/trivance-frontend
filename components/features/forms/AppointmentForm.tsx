@@ -24,7 +24,11 @@ import { useEffect } from "react";
 import { MONTHS } from "@/utils/const";
 import { useRouter } from "next/navigation";
 import { formatInterval } from "@/utils/format";
-import { createAppointment, createPaymentLink, getAppointment } from "@/lib/api/appointments";
+import {
+  createAppointment,
+  createPaymentLink,
+  getAppointment,
+} from "@/lib/api/appointments";
 
 const Card = ({
   children,
@@ -211,7 +215,7 @@ export default function AppointmentForm({
     };
     const role = user?.user?.role ?? UserRole.CLIENT;
     if (role >= UserRole.STAFF && selectedClientId) {
-      payload.client_id = selectedClientId; // backend acepta clients.id o users.id
+      payload.client_id = selectedClientId;
     }
     await toast.promise(
       createAppointment(payload).then((data) => {
