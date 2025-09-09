@@ -22,8 +22,6 @@ export interface Appointment {
     email?: string | null;
     phone?: string | null;
     address?: string | null;
-    contact_email?: string | null;
-    contact_phone?: string | null;
     user: {
       id: string;
       name: string;
