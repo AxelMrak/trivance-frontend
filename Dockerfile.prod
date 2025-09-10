@@ -1,0 +1,40 @@
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+
+# Install dependencies
+COPY package*.json ./
+RUN npm ci
+
+# Accept public envs at build time (so Next.js can bake them)
+ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_BASE_URL
+ARG API_URL
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+ENV NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL}
+ENV API_URL=${API_URL}
+
+# Copy source and build
+COPY . .
+RUN npm run build
+
+# --- Runtime image ---
+FROM node:18-alpine AS runner
+WORKDIR /app
+
+# Only production deps for runtime
+COPY package*.json ./
+RUN npm ci --omit=dev
+
+# Copy built app and needed files
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/next.config.ts ./next.config.ts
+
+# Expose the Next.js default port
+EXPOSE 3000
+
+ENV NODE_ENV=production
+
+CMD ["npm", "start"]
+
