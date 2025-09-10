@@ -208,9 +208,7 @@ export default function AppointmentForm({
   const handleReserve = async () => {
     const payload: any = {
       service_id: formData.service_id,
-      start_date: new Date(
-        `${formData.date}T${formData.time}:00`,
-      ).toISOString(),
+      start_date: `${formData.date}T${formData.time}:00Z`,
       description: formData.description || undefined,
     };
     const role = user?.user?.role ?? UserRole.CLIENT;
@@ -242,9 +240,7 @@ export default function AppointmentForm({
       async () => {
         const payload: any = {
           service_id: formData.service_id,
-          start_date: new Date(
-            `${formData.date}T${formData.time}:00`,
-          ).toISOString(),
+          start_date: `${formData.date}T${formData.time}:00Z`,
           description: formData.description || undefined,
         };
         const role = user?.user?.role ?? UserRole.CLIENT;
@@ -254,7 +250,6 @@ export default function AppointmentForm({
         const appointment = await createAppointment(payload);
         setReservedAppt(appointment);
         setAwaitingPayment(true);
-
         const payment = await createPaymentLink(appointment.id);
         window.open(payment.paymentLink, "_blank");
         setIsPolling(true);
